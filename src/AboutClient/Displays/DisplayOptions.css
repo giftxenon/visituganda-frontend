@@ -1,0 +1,31 @@
+/* DisplayOptions.css */
+h1{
+    text-align: center;
+    color: #4caf50;
+}
+.listOfCategory ul {
+    list-style-type: none; /* Remove default bullet points */
+    padding: 0;
+    margin-top: 70px;
+  }
+  
+  .listOfCategory li {
+    
+    margin-bottom: 10px; /* Add space between items */
+    padding: 20px; /* Add padding inside each item */
+    margin-left: 30px;
+    margin-right: 30px ;
+    border: 2px solid lightgreen; /* Light gray border */
+    border-radius: 10px; /* Rounded corners */
+    background-color: #14a37f; /* Slight background color for better look */
+    cursor: pointer; /* Makes the items look clickable */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+    text-align: center;
+    color: white;
+  }
+  
+  .listOfCategory li:hover {
+    background-color: #4aedc4;
+    ; /* Change background on hover */
+  }
+  
