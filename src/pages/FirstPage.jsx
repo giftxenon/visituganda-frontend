@@ -202,9 +202,24 @@ const VisitUganda = () => { // -------------------------------------------------
           {/* Logo and Title */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <img src="../imagesFolderO/ugMap.png" alt="Visit Uganda Logo" style={{ width: '100px' }} />
-            <Typography variant="h4" color="white">
-              Visit Uganda
-            </Typography>
+<Typography
+  variant="h4"
+  color="white"
+  sx={{
+    fontFamily: "'Montserrat', sans-serif",
+    fontWeight: 700,
+    textAlign: 'left',                          // keep left-aligned
+    fontSize: 'clamp(1.5rem, 5vw, 3.5rem)',     // shrink/grow dynamically
+    lineHeight: 1.2,
+    letterSpacing: '1px',
+    whiteSpace: 'nowrap',                        // prevents wrapping to the next line
+    overflow: 'hidden',                          // avoids overflow outside container
+    textOverflow: 'ellipsis',                    // adds ... if too long (optional)
+  }}
+>
+  Visit The PEARL
+</Typography>
+
           </Box>
 
           {/* Navigation Links for Desktop */}
@@ -266,16 +281,35 @@ const VisitUganda = () => { // -------------------------------------------------
         <BackgroundSlideshow images={backgroundImages} interval={5000} />
 
         {/* Main Header Content */}
-        <Box sx={{ textAlign: 'center', color: 'white', px: 2 }}>
-          <Typography variant="h2" sx={{ mb: 2 }}>
-            Explore the Pearl of Africa
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 4, fontSize: '1.3rem' }}>
-            Experience the beauty and diversity of Uganda through our platform. Explore breathtaking landscapes,<br />
-            book thrilling safaris, and discover cultural treasures. 
-            We provide seamless access to tours, accommodations,  <br /> and local experiences, 
-            making your journey unforgettable.<br />Join us for an adventure of a lifetime!
-          </Typography>
+ <Box sx={{ textAlign: 'center', color: 'white', px: { xs: 2, sm: 4, md: 6 } }}>
+  {/* Hero Heading */}
+  <Typography
+    variant="h2"
+    sx={{
+      fontFamily: "'Montserrat', sans-serif",
+      fontWeight: 700,
+      fontSize: 'clamp(1.8rem, 6vw, 3rem)', // scales for all screens
+      lineHeight: 1.2,
+      mb: 2,
+    }}
+  >
+    Explore the Pearl of Africa
+  </Typography>
+
+  {/* Hero Body Text */}
+  <Typography
+    variant="body1"
+    sx={{
+      fontFamily: "'Inter', sans-serif",      // clean, readable body font
+      fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', // fluid size for small to large screens
+      lineHeight: 1.6,
+      mb: 4,
+    }}
+  >
+    Experience the beauty and diversity of Uganda through our platform. Explore breathtaking landscapes,{' '}
+    book thrilling safaris, and discover cultural treasures. We provide seamless access to tours, accommodations,{' '}
+    and local experiences, making your journey unforgettable. Join us for an adventure of a lifetime!
+  </Typography>
 
           <Box>
             <Button
@@ -387,91 +421,167 @@ const VisitUganda = () => { // -------------------------------------------------
       </Box>
 
       {/* Our Sponsors Section */}
-      <Box
-        id="sponsor-main"
-        ref={sectionsRef.current['sponsor-main']}
-        sx={{ textAlign: 'center', padding: '60px 20px' }}
-      >
-        <Typography variant="h4" sx={{ mb: 2 }}>
-          OUR SPONSORS
-        </Typography>
-        <Typography variant="body1" sx={{ mb: 4 }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit,
-          repudiandae.
-        </Typography>
-        <Grid container spacing={4} justifyContent="center">
-          <Grid item xs={12} sm={4}>
-            <Typography variant="h6" gutterBottom>
-              MESTIL HOTEL
-            </Typography>
-            <img
-              src="/imagesFolder/london.png"
-              alt="Mestil Hotel"
-              style={{ width: '100%', borderRadius: '10px' }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography variant="h6" gutterBottom>
-              AFRICANA HOTEL
-            </Typography>
-            <img
-              src="/imagesFolder/newyork.png"
-              alt="Africana Hotel"
-              style={{ width: '100%', borderRadius: '10px' }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography variant="h6" gutterBottom>
-              SAFARI RESORT
-            </Typography>
-            <img
-              src="/imagesFolder/washington.png"
-              alt="Safari Resort"
-              style={{ width: '100%', borderRadius: '10px' }}
-            />
-          </Grid>
-        </Grid>
-      </Box>
+     <Box
+  id="sponsor-main"
+  ref={sectionsRef.current['sponsor-main']}
+  sx={{ textAlign: 'center', padding: '60px 20px' }}
+>
+  <Typography variant="h4" sx={{ mb: 2 }}>
+    Our Trusted Partners
+  </Typography>
 
-      {/* Visit Uganda Team Section */}
-      <Box
-        id="devs"
-        ref={sectionsRef.current['devs']}
-        sx={{ textAlign: 'center', padding: '60px 20px', backgroundColor: '#4caf50' }} // Changed to #4caf50
-      >
-        <Typography variant="h4" sx={{ mb: 2 }}>
-          Visit Uganda Team
+  <Typography
+    variant="body1"
+    sx={{ mb: 4, maxWidth: '850px', mx: 'auto' }}
+  >
+    We work closely with selected hospitality partners who uphold high standards
+    of comfort, service, and authentic Ugandan experiences for both local and
+    international travelers.
+  </Typography>
+
+  <Grid container spacing={4} justifyContent="center">
+
+    {/* Mestil Hotel */}
+    <Grid item xs={12} sm={4}>
+      <Typography variant="h6" gutterBottom>
+        Mestil Hotel & Residences
+      </Typography>
+      <img
+        src="/imagesFolderO/firstpagePics/HotelMestil.jpg"
+        alt="Mestil Hotel"
+        style={{ width: '100%', borderRadius: '10px' }}
+      />
+      <Typography variant="body2" sx={{ mt: 2 }}>
+        A premium city hotel offering luxury accommodation, wellness services,
+        and fine dining for travelers seeking comfort in Kampala.
+      </Typography>
+    </Grid>
+
+    {/* Africana Hotel */}
+    <Grid item xs={12} sm={4}>
+      <Typography variant="h6" gutterBottom>
+        Africana Hotel
+      </Typography>
+      <img
+        src="/imagesFolderO/firstpagePics/HotelAfrica.jpg"
+        alt="Africana Hotel"
+        style={{ width: '100%', borderRadius: '10px' }}
+      />
+      <Typography variant="body2" sx={{ mt: 2 }}>
+        Known for spacious rooms and conference facilities, Africana Hotel
+        provides a reliable stay for business and leisure visitors alike.
+      </Typography>
+    </Grid>
+
+    {/* Safari Resort */}
+    <Grid item xs={12} sm={4}>
+      <Typography variant="h6" gutterBottom>
+        Safari Resort
+      </Typography>
+      <img
+        src="/imagesFolderO/firstpagePics/HotelPearl.jpg"
+        alt="Safari Resort"
+        style={{ width: '100%', borderRadius: '10px' }}
+      />
+      <Typography variant="body2" sx={{ mt: 2 }}>
+        A peaceful retreat blending nature and comfort, ideal for guests
+        looking to relax while experiencing Uganda’s natural beauty.
+      </Typography>
+    </Grid>
+
+  </Grid>
+</Box>
+
+{/* Visit Uganda Team Section */}
+<Box
+  id="devs"
+  ref={sectionsRef.current['devs']}
+  sx={{
+    textAlign: 'center',
+    padding: '60px 20px',
+    backgroundColor: '#4caf50',
+  }}
+>
+  <Typography variant="h4" sx={{ mb: 2, color: 'white' }}>
+    Visit The Pearl Team
+  </Typography>
+
+  <Typography variant="body1" sx={{ mb: 4, color: 'white', maxWidth: '800px', mx: 'auto' }}>
+    Our passionate team combines technology, data, and leadership to build
+    Visit The Pearl — a digital gateway showcasing Uganda’s beauty to the world.
+  </Typography>
+
+  <Grid container spacing={4} justifyContent="center">
+
+    {/* Medad Sylvester */}
+    <Grid item xs={12} sm={4}>
+      <Box sx={{ borderRadius: '12px', p: 3, backgroundColor: 'white' }}>
+        <img
+          src="./imagesFolderO/firstpagePics/Medad.jpeg"
+          alt="Medad Sylvester"
+          style={{ width: '160px', height: '160px', borderRadius: '50%' }}
+        />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Sylvester M Funyebba
         </Typography>
-        <Typography variant="body1" sx={{ mb: 4 }} color="white">
-          <p>
-            {`Our dedicated "Visit Uganda" team passionately promotes Uganda's rich culture, 
-             wildlife, and natural beauty, delivering exceptional experiences that inspire 
-             global travelers to explore the Pearl of Africa.`}
-          </p>
+        <Typography variant="subtitle2" color="text.secondary">
+          Data Analyst
         </Typography>
-        <Grid container spacing={4} justifyContent="center">
-          {/* Repeat this Grid item for each team member */}
-          {Array.from({ length: 6 }).map((_, index) => (
-            <Grid item xs={12} sm={4} key={index}>
-              <Box sx={{ borderRadius: '10px', p: 3, backgroundColor: '#4caf50' }}> {/* Changed to #4caf50 */}
-                <Typography variant="h6" gutterBottom>
-                  CEO {index + 1}
-                </Typography>
-                <img
-                  src="/imagesFolderO/Ben10.jpg"
-                  alt={`Team Member ${index + 1}`}
-                  style={{ width: '200px', borderRadius: '50%' }}
-                />
-                <Typography variant="body2" sx={{ mt: 2 }}>
-                  Discover Uganda with our top-rated travel website! Book tours,
-                  accommodations, and transport effortlessly. Explore breathtaking
-                  destinations.
-                </Typography>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          “I analyze user behavior and platform data to ensure Visit The Pearl
+          delivers meaningful insights, better recommendations, and a seamless
+          experience for travelers exploring Uganda.”
+        </Typography>
       </Box>
+    </Grid>
+
+    {/* Arthur Musemeza */}
+    <Grid item xs={12} sm={4}>
+      <Box sx={{ borderRadius: '12px', p: 3, backgroundColor: 'white' }}>
+        <img
+          src="/imagesFolderO/firstpagePics/Arthur.jpeg"
+          alt="Arthur Musemeza"
+          style={{ width: '160px', height: '160px', borderRadius: '50%' }}
+        />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Arthur Musemeza
+        </Typography>
+        <Typography variant="subtitle2" color="text.secondary">
+          Project Manager
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          “I oversee planning, coordination, and execution to ensure Visit The Pearl
+          grows sustainably while meeting user needs, timelines, and quality standards.”
+        </Typography>
+      </Box>
+    </Grid>
+
+    {/* Benon */}
+    <Grid item xs={12} sm={4}>
+      <Box sx={{ borderRadius: '12px', p: 3, backgroundColor: 'white' }}>
+       <img 
+  src="/imagesFolderO/firstpagePics/BenFinal.jpeg"
+  alt="Benon G. Ssemmambo"
+  style={{ width: '160px', height: '160px', borderRadius: '50%' }}
+/>
+
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Benon G. Ssemmambo
+        </Typography>
+        <Typography variant="subtitle2" color="text.secondary">
+          Software Developer
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          “I design and develop the Visit The Pearl platform — building secure,
+          scalable systems that allow travelers to book, explore, and experience
+          Uganda effortlessly.”
+        </Typography>
+      </Box>
+    </Grid>
+
+  </Grid>
+</Box>
+
 
       {/* Careers Section */}
       <Box
