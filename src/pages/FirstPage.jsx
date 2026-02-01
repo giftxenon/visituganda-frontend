@@ -506,9 +506,12 @@ const VisitUganda = () => { // -------------------------------------------------
     Visit The Pearl Team
   </Typography>
 
-  <Typography variant="body1" sx={{ mb: 4, color: 'white', maxWidth: '800px', mx: 'auto' }}>
-    Our passionate team combines technology, data, and leadership to build
-    Visit The Pearl — a digital gateway showcasing Uganda’s beauty to the world.
+  <Typography
+    variant="body1"
+    sx={{ mb: 4, color: 'white', maxWidth: '800px', mx: 'auto' }}
+  >
+    The Visit The Pearl team combines technology, data, and leadership to
+    create a digital gateway showcasing Uganda’s beauty to the world.
   </Typography>
 
   <Grid container spacing={4} justifyContent="center">
@@ -528,9 +531,9 @@ const VisitUganda = () => { // -------------------------------------------------
           Data Analyst
         </Typography>
         <Typography variant="body2" sx={{ mt: 2 }}>
-          “I analyze user behavior and platform data to ensure Visit The Pearl
-          delivers meaningful insights, better recommendations, and a seamless
-          experience for travelers exploring Uganda.”
+          Analyzes user behavior and platform data to ensure Visit The Pearl
+          delivers meaningful insights, accurate recommendations, and a
+          seamless experience for travelers exploring Uganda.
         </Typography>
       </Box>
     </Grid>
@@ -550,8 +553,8 @@ const VisitUganda = () => { // -------------------------------------------------
           Project Manager
         </Typography>
         <Typography variant="body2" sx={{ mt: 2 }}>
-          “I oversee planning, coordination, and execution to ensure Visit The Pearl
-          grows sustainably while meeting user needs, timelines, and quality standards.”
+          Oversees planning, coordination, and execution to ensure Visit The Pearl
+          grows sustainably while meeting user needs, timelines, and quality standards.
         </Typography>
       </Box>
     </Grid>
@@ -559,12 +562,11 @@ const VisitUganda = () => { // -------------------------------------------------
     {/* Benon */}
     <Grid item xs={12} sm={4}>
       <Box sx={{ borderRadius: '12px', p: 3, backgroundColor: 'white' }}>
-       <img 
-  src="/imagesFolderO/firstpagePics/BenFinal.jpeg"
-  alt="Benon G. Ssemmambo"
-  style={{ width: '160px', height: '160px', borderRadius: '50%' }}
-/>
-
+        <img
+          src="/imagesFolderO/firstpagePics/BenFinal.jpeg"
+          alt="Benon G. Ssemmambo"
+          style={{ width: '160px', height: '160px', borderRadius: '50%' }}
+        />
         <Typography variant="h6" sx={{ mt: 2 }}>
           Benon G. Ssemmambo
         </Typography>
@@ -572,15 +574,16 @@ const VisitUganda = () => { // -------------------------------------------------
           Software Developer
         </Typography>
         <Typography variant="body2" sx={{ mt: 2 }}>
-          “I design and develop the Visit The Pearl platform — building secure,
+          Designs and develops the Visit The Pearl platform — building secure,
           scalable systems that allow travelers to book, explore, and experience
-          Uganda effortlessly.”
+          Uganda effortlessly.
         </Typography>
       </Box>
     </Grid>
 
   </Grid>
 </Box>
+
 
 
       {/* Careers Section */}
