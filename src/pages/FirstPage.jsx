@@ -188,94 +188,101 @@ const VisitUganda = () => { // -------------------------------------------------
   return (
     <Box sx={{ padding: 0, margin: 0 }}>
       <CssBaseline />
-
-      {/* AppBar for Navigation */}
-      <AppBar
-        position="fixed"
-        sx={{
-          backgroundColor: '#4caf50', // Changed from #53c4f7 to #4caf50
-          boxShadow: 'none',
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-        }}
-      >
-        <Toolbar sx={{ justifyContent: 'space-between', width: '100%' }}>
-          {/* Logo and Title */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <img src="../imagesFolderO/ugMap.png" alt="Visit Uganda Logo" style={{ width: '100px' }} />
-<Typography
-  variant="h4"
-  color="white"
+<AppBar
+  position="fixed"
   sx={{
-    fontFamily: "'Montserrat', sans-serif",
-    fontWeight: 700,
-    textAlign: 'left',                          // keep left-aligned
-    fontSize: 'clamp(1.5rem, 5vw, 3.5rem)',     // shrink/grow dynamically
-    lineHeight: 1.2,
-    letterSpacing: '1px',
-    whiteSpace: 'nowrap',                        // prevents wrapping to the next line
-    overflow: 'hidden',                          // avoids overflow outside container
-    textOverflow: 'ellipsis',                    // adds ... if too long (optional)
+    backgroundColor: '#4caf50',
+    boxShadow: 'none',
+    zIndex: (theme) => theme.zIndex.drawer + 1,
   }}
 >
-  Visit The PEARL
-</Typography>
+  <Toolbar sx={{ width: '100%' }}>
+    
+    {/* LEFT: Logo + Title */}
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <img
+        src="../imagesFolderO/ugMap.png"
+        alt="Visit Uganda Logo"
+        style={{
+          width: 'clamp(40px, 8vw, 90px)',
+          height: 'auto',
+          flexShrink: 0,
+        }}
+      />
 
-          </Box>
+      <Typography
+        variant="h4"
+        sx={{
+          fontFamily: "'Montserrat', sans-serif",
+          fontWeight: 500,
+          color: 'white',
+          fontSize: 'clamp(1.2rem, 4vw, 2.5rem)',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        Visit the Pearl
+      </Typography>
+    </Box>
 
-          {/* Navigation Links for Desktop */}
-          <NavLinks>
-            {navLinks.map(({ label, href }) => {
-              const sectionId = href.replace('#', '');
-              const isActive = activeSection === sectionId;
+    {/* 🔥 SPACER */}
+    <Box sx={{ flexGrow: 1 }} />
 
-              return (
-                <Button
-                  key={label}
-                  color="inherit"
-                  component="a"
-                  href={href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection(sectionId);
-                    setActiveSection(sectionId);
-                  }}
-                  sx={{
-                    position: 'relative',
-                    borderRadius: '4px',
-                    border: isActive ? '2px solid #4caf50' : '2px solid transparent', // Added full border
-                    color: isActive ? '#4caf50' : 'inherit', // Changed to #4caf50
-                    fontWeight: isActive ? 'bold' : 'normal',
-                    backgroundColor: isActive ? 'rgba(76, 175, 80, 0.1)' : 'transparent',
-                    '&:hover': {
-                      backgroundColor: 'rgba(76, 175, 80, 0.2)', // Changed to #4caf50
-                      border: '2px solid #4caf50', // Maintain border on hover
-                      color: '#4caf50', // Change text color on hover
-                    },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  {label}
-                </Button>
-              );
-            })}
-          </NavLinks>
+    {/* RIGHT: Nav Links (Desktop only) */}
+    <NavLinks sx={{ display: { xs: 'none', sm: 'flex' } }}>
+      {navLinks.map(({ label, href }) => {
+        const sectionId = href.replace('#', '');
+        const isActive = activeSection === sectionId;
 
-          {/* Menu Icon for Mobile */}
-          <IconButton
+        return (
+          <Button
+            key={label}
             color="inherit"
-            aria-label="open drawer"
-            edge="end"
-            onClick={handleDrawerToggle}
-            sx={{ display: { sm: 'none' } }}
+            component="a"
+            href={href}
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSection(sectionId);
+              setActiveSection(sectionId);
+            }}
+            sx={{
+              borderRadius: '4px',
+              border: isActive ? '2px solid #4caf50' : '2px solid transparent',
+              color: isActive ? '#4caf50' : 'white',
+              fontWeight: isActive ? 'bold' : 'normal',
+              backgroundColor: isActive
+                ? 'rgba(76, 175, 80, 0.1)'
+                : 'transparent',
+              '&:hover': {
+                backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                border: '2px solid #ffffffff',
+                color: '#ffffffff',
+              },
+              transition: 'all 0.3s ease',
+            }}
           >
-            <Menu />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+            {label}
+          </Button>
+        );
+      })}
+    </NavLinks>
 
-      {/* Spacer to Offset Fixed AppBar */}
-      <Toolbar />
+    {/* RIGHT: Menu Icon (Mobile only) */}
+    <IconButton
+      color="inherit"
+      edge="end"
+      onClick={handleDrawerToggle}
+      sx={{ display: { xs: 'flex', sm: 'none' } }}
+    >
+      <Menu />
+    </IconButton>
 
+  </Toolbar>
+</AppBar>
+
+
+         
+
+ 
       {/* Header Section */}
       <HeaderBox id="home" ref={sectionsRef.current['home']}>
         <BackgroundSlideshow images={backgroundImages} interval={5000} />
@@ -293,7 +300,13 @@ const VisitUganda = () => { // -------------------------------------------------
       mb: 2,
     }}
   >
-    Explore the Pearl of Africa
+  Explore the Pearl{' '}
+  <Box component="span" sx={{ display: { xs: 'block', sm: 'inline' } }}>
+    of
+  </Box>{' '}
+  <Box component="span" sx={{ display: { xs: 'block', sm: 'inline' } }}>
+    Africa
+  </Box>
   </Typography>
 
   {/* Hero Body Text */}
@@ -328,7 +341,7 @@ const VisitUganda = () => { // -------------------------------------------------
                   border: '1px solid #ffffff', // Add border on hover
                 },
                 '&:active': {
-                  backgroundColor: '#4caf50', // Changed from #53c4f7 to #4caf50
+                  backgroundColor: '#02fa1fff', // Changed from #53c4f7 to #4caf50
                   color: '#ffffff', // Text color on click
                   border: '1px solid #ffffff', // Keep border on click
                 },
@@ -427,7 +440,9 @@ const VisitUganda = () => { // -------------------------------------------------
   sx={{ textAlign: 'center', padding: '60px 20px' }}
 >
   <Typography variant="h4" sx={{ mb: 2 }}>
-    Our Trusted Partners
+    Our trusted Partners
+
+
   </Typography>
 
   <Typography
@@ -503,7 +518,7 @@ const VisitUganda = () => { // -------------------------------------------------
   }}
 >
   <Typography variant="h4" sx={{ mb: 2, color: 'white' }}>
-    Visit The Pearl Team
+    Visit Uganda Team
   </Typography>
 
   <Typography
@@ -520,7 +535,7 @@ const VisitUganda = () => { // -------------------------------------------------
     <Grid item xs={12} sm={4}>
       <Box sx={{ borderRadius: '12px', p: 3, backgroundColor: 'white' }}>
         <img
-          src="./imagesFolderO/firstpagePics/Medad.jpeg"
+          src="./imagesFolderO/firstpagePics/MedadFirstPage.jpeg"
           alt="Medad Sylvester"
           style={{ width: '160px', height: '160px', borderRadius: '50%' }}
         />
@@ -568,7 +583,7 @@ const VisitUganda = () => { // -------------------------------------------------
           style={{ width: '160px', height: '160px', borderRadius: '50%' }}
         />
         <Typography variant="h6" sx={{ mt: 2 }}>
-          Benon G. Ssemmambo
+          Benon G Ssemmambo
         </Typography>
         <Typography variant="subtitle2" color="text.secondary">
           Software Developer
