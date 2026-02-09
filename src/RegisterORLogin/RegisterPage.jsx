@@ -89,24 +89,31 @@ export default function RegisterCustomer() {
       const result = await response.json();
       console.log("📥 BACKEND RESPONSE:", result);
 
-      // ✅ SUCCESS CONDITION (ALIGNED)
-      if (response.ok) {
-        console.log("✅ REGISTRATION SUCCESSFUL");
+      // ✅ SUCCESS CONDITION
+      if (response.ok && result.success) {
         alert(result.message || "Registration successful!");
+
+        // ✅ STORE USERNAME FOR DASHBOARD
+        localStorage.setItem("username", payload.username);
+
+        // ✅ STORE JWT IF BACKEND RETURNS TOKEN
+        if (result.token) {
+          console.log("🛡 JWT RECEIVED:", result.token);
+          localStorage.setItem("jwtToken", result.token);
+        }
+
+        // Navigate to dashboard
         navigate("/customer/dashboard");
         return;
       }
 
       // ❌ FAILURE PATH
-      console.warn("❌ REGISTRATION FAILED");
       alert(result.message || "Registration failed");
-
       if (result.errors) {
         console.log("⚠️ FIELD ERRORS:", result.errors);
         setErrors(result.errors);
         setMessages(result.errors);
       }
-
     } catch (error) {
       console.error("🚨 NETWORK / SERVER ERROR:", error);
       alert("Cannot reach server. Please try again.");

@@ -1,4 +1,4 @@
-import  { useState, useRef} from 'react';
+import  { useState, useRef, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -25,12 +25,21 @@ function DashBoard() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [activePage, setActivePage] = useState('Car rental');
 
+  // 🔹 New state to store username
+  const [username, setUsername] = useState('');
+
   // Create refs for each section
   const carRentalRef = useRef(null);
   const attractionsRef = useRef(null);
   const accommodationRef = useRef(null);
   const airportTaxiRef = useRef(null);
   const travelPartnerRef = useRef(null);
+
+  // 🔹 Load username from localStorage on component mount
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('username'); // should be set during login/register
+    if(storedUsername) setUsername(storedUsername);
+  }, []);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -46,6 +55,11 @@ function DashBoard() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear(); // 🔹 clear JWT and username
+    window.location.href = '/LoginPage'; // redirect to login page
   };
 
   const handlePageClick = (page) => {
@@ -65,7 +79,7 @@ function DashBoard() {
       case 'Airport Taxi':
         airportTaxiRef.current?.scrollIntoView({ behavior: 'smooth' });
         break;
-        case 'Travel partner':
+      case 'Travel Partner':
         travelPartnerRef.current?.scrollIntoView({ behavior: 'smooth' });
         break;
       default:
@@ -78,10 +92,8 @@ function DashBoard() {
       <AppBar position="static" sx={{ mb: 2, backgroundColor: "#4caf50" }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            {/* Logo */}
             <img src="../imagesFolderO/ugMap.png" alt="Visit Uganda Logo" style={{ width: '100px' }} />
 
-            {/* Title for larger screens */}
             <Typography
               variant="h6"
               noWrap
@@ -89,8 +101,6 @@ function DashBoard() {
               sx={{
                 mr: 2,
                 display: { xs: 'none', md: 'flex' },
-                //fontWeight: 700,
-                //letterSpacing: '.2rem',
                 color: 'black',
                 textDecoration: 'none',
               }}
@@ -98,7 +108,6 @@ function DashBoard() {
               Visit Uganda256
             </Typography>
 
-            {/* Mobile Menu Button */}
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
               <IconButton
                 size="large"
@@ -134,7 +143,6 @@ function DashBoard() {
               </Menu>
             </Box>
 
-            {/* Title for mobile screens */}
             <Typography
               variant="h5"
               noWrap
@@ -152,7 +160,6 @@ function DashBoard() {
               Visit Uganda
             </Typography>
 
-            {/* Desktop Menu */}
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
                 <Button
@@ -175,8 +182,11 @@ function DashBoard() {
               ))}
             </Box>
 
-            {/* User Avatar and Menu */}
+            {/* User Avatar & Menu */}
             <Box sx={{ flexGrow: 0 }}>
+              <Typography sx={{ color: 'white', mr: 2 }}>
+                Welcome {username || 'User'} {/* 🔹 Show username */}
+              </Typography>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
@@ -199,7 +209,13 @@ function DashBoard() {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem
+                    key={setting}
+                    onClick={() => {
+                      handleCloseUserMenu();
+                      if(setting === 'Logout') handleLogout(); // 🔹 Logout action
+                    }}
+                  >
                     <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
                   </MenuItem>
                 ))}
@@ -209,22 +225,11 @@ function DashBoard() {
         </Container>
       </AppBar>
 
-      {/* Sections with refs */}
-      <div ref={carRentalRef}>
-        <CarRental />
-      </div>
-      <div ref={attractionsRef}>
-        <Attractions />
-      </div>
-      <div ref={accommodationRef}>
-        <Accomodation />
-      </div>
-      <div ref={airportTaxiRef}>
-        <AirportTaxi />
-      </div>
-      <div ref={travelPartnerRef}>
-        <TravelPartner />
-      </div>
+      <div ref={carRentalRef}><CarRental /></div>
+      <div ref={attractionsRef}><Attractions /></div>
+      <div ref={accommodationRef}><Accomodation /></div>
+      <div ref={airportTaxiRef}><AirportTaxi /></div>
+      <div ref={travelPartnerRef}><TravelPartner /></div>
     </div>
   );
 }
