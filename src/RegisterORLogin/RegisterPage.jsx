@@ -62,77 +62,54 @@ export default function RegisterCustomer() {
     clearErrors();
 
     const formData = new FormData(event.currentTarget);
-    const username = (formData.get("username") || "").toString().trim();
-    const fullName = (formData.get("fullName") || "").toString().trim();
-    const email = (formData.get("email") || "").toString().trim();
-    const msisdn = (formData.get("msisdn") || "").toString().trim();
-    const password = formData.get("password") || "";
-    const passwordConfirm = formData.get("passwordConfirm") || "";
 
-    let isValid = true;
-    const newErrors = {};
-    const newMessages = {};
+    const payload = {
+      username: (formData.get("username") || "").trim(),
+      fullName: (formData.get("fullName") || "").trim(),
+      email: formData.get("email") || null,
+      msisdn: formData.get("msisdn") || null,
+      password: formData.get("password"),
+      passwordConfirm: formData.get("passwordConfirm"),
+    };
 
-    if (!username) {
-      newErrors.username = true;
-      newMessages.username = "Username is required";
-      isValid = false;
-    }
-    if (!fullName) {
-      newErrors.fullName = true;
-      newMessages.fullName = "Full name is required";
-      isValid = false;
-    }
-    if (!password || password.length < 6) {
-      newErrors.password = true;
-      newMessages.password = "Password must be at least 6 characters";
-      isValid = false;
-    }
-    if (password !== passwordConfirm) {
-      newErrors.passwordConfirm = true;
-      newMessages.passwordConfirm = "Passwords do not match";
-      isValid = false;
-    }
-    if (email && !email.includes("@")) {
-      newErrors.email = true;
-      newMessages.email = "Please enter a valid email";
-      isValid = false;
-    }
-
-    if (!isValid) {
-      setErrors(newErrors);
-      setMessages(newMessages);
-      return;
-    }
+    console.log("📤 REGISTER PAYLOAD:", payload);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/register/customer`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, fullName, email: email || null, msisdn: msisdn || null, password, passwordConfirm }),
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/v1/auth/register/customer`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
-
+      console.log("📡 HTTP STATUS:", response.status);
 
       const result = await response.json();
-      console.log("REGISTER RESPONSE:", result);
-      if (response.ok && result.success) {
-        alert("Registration successful!");
+      console.log("📥 BACKEND RESPONSE:", result);
+
+      // ✅ SUCCESS CONDITION (ALIGNED)
+      if (response.ok) {
+        console.log("✅ REGISTRATION SUCCESSFUL");
+        alert(result.message || "Registration successful!");
         navigate("/customer/dashboard");
-      } else {
-        alert(result.message || "Registration failed");
-        if (result.errors) {
-          Object.keys(result.errors).forEach((key) => {
-            newErrors[key] = true;
-            newMessages[key] = result.errors[key];
-          });
-          setErrors(newErrors);
-          setMessages(newMessages);
-        }
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      alert("Cannot reach server!");
+
+      // ❌ FAILURE PATH
+      console.warn("❌ REGISTRATION FAILED");
+      alert(result.message || "Registration failed");
+
+      if (result.errors) {
+        console.log("⚠️ FIELD ERRORS:", result.errors);
+        setErrors(result.errors);
+        setMessages(result.errors);
+      }
+
+    } catch (error) {
+      console.error("🚨 NETWORK / SERVER ERROR:", error);
+      alert("Cannot reach server. Please try again.");
     }
   };
 
@@ -155,113 +132,49 @@ export default function RegisterCustomer() {
               gap: 2,
             }}
           >
-            {/* Username */}
             <FormControl>
-              <FormLabel htmlFor="username">Username *</FormLabel>
-              <TextField
-                required
-                fullWidth
-                id="username"
-                name="username"
-                placeholder="JohnDoe"
-                error={errors.username}
-                helperText={messages.username}
-              />
+              <FormLabel>Username *</FormLabel>
+              <TextField name="username" required fullWidth error={!!errors.username} helperText={messages.username} />
             </FormControl>
 
-            {/* Full Name */}
             <FormControl>
-              <FormLabel htmlFor="fullName">Full Name *</FormLabel>
-              <TextField
-                required
-                fullWidth
-                id="fullName"
-                name="fullName"
-                placeholder="John Babosa"
-                error={errors.fullName}
-                helperText={messages.fullName}
-              />
+              <FormLabel>Full Name *</FormLabel>
+              <TextField name="fullName" required fullWidth error={!!errors.fullName} helperText={messages.fullName} />
             </FormControl>
 
-            {/* Email */}
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <TextField
-                fullWidth
-                id="email"
-                name="email"
-                type="email"
-                placeholder="john@example.com"
-                error={errors.email}
-                helperText={messages.email || "Optional"}
-              />
+              <FormLabel>Email</FormLabel>
+              <TextField name="email" fullWidth />
             </FormControl>
 
-            {/* Phone */}
             <FormControl>
-              <FormLabel htmlFor="msisdn">Phone Number</FormLabel>
-              <TextField
-                fullWidth
-                id="msisdn"
-                name="msisdn"
-                placeholder="+256771234567"
-                helperText="Optional"
-              />
+              <FormLabel>Phone Number</FormLabel>
+              <TextField name="msisdn" fullWidth />
             </FormControl>
 
-            {/* Password */}
             <FormControl>
-              <FormLabel htmlFor="password">Password *</FormLabel>
-              <TextField
-                required
-                fullWidth
-                id="password"
-                name="password"
-                type="password"
-                placeholder="••••••••"
-                error={errors.password}
-                helperText={messages.password}
-              />
+              <FormLabel>Password *</FormLabel>
+              <TextField name="password" type="password" required fullWidth error={!!errors.password} helperText={messages.password} />
             </FormControl>
 
-            {/* Confirm Password */}
             <FormControl>
-              <FormLabel htmlFor="passwordConfirm">Confirm Password *</FormLabel>
-              <TextField
-                required
-                fullWidth
-                id="passwordConfirm"
-                name="passwordConfirm"
-                type="password"
-                placeholder="••••••••"
-                error={errors.passwordConfirm}
-                helperText={messages.passwordConfirm}
-              />
+              <FormLabel>Confirm Password *</FormLabel>
+              <TextField name="passwordConfirm" type="password" required fullWidth error={!!errors.passwordConfirm} helperText={messages.passwordConfirm} />
             </FormControl>
 
-            {/* Submit Buttons */}
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ gridColumn: { xs: "1 / 2", sm: "1 / 3" }, py: 1.5, backgroundColor: "#00a152", "&:hover": { bgcolor: "#008040" } }}
+              sx={{ gridColumn: { xs: "1", sm: "1 / 3" }, py: 1.5, backgroundColor: "#00a152" }}
             >
-              Register as Tourist
-            </Button>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ gridColumn: { xs: "1 / 2", sm: "1 / 3" }, py: 1.5, backgroundColor: "#00a152", "&:hover": { bgcolor: "#008040" } }}
-            >
-              Register as Service Provider
+              Register
             </Button>
           </Box>
 
-          {/* Login Link */}
           <Typography textAlign="center" sx={{ mt: 2 }}>
             Already have an account?{" "}
-            <Link component={RouterLink} to="/LoginPage" variant="body2" sx={{ color: "#00a152", fontWeight: "bold" }}>
+            <Link component={RouterLink} to="/LoginPage" sx={{ color: "#00a152" }}>
               Log in here
             </Link>
           </Typography>
@@ -271,12 +184,8 @@ export default function RegisterCustomer() {
           </Divider>
 
           <Stack spacing={2}>
-            <Button fullWidth variant="outlined" startIcon={<Google />} sx={{ color: "#00a152", borderColor: "#00a152" }}>
-              Continue with Google
-            </Button>
-            <Button fullWidth variant="outlined" startIcon={<Facebook />} sx={{ color: "#00a152", borderColor: "#00a152" }}>
-              Continue with Facebook
-            </Button>
+            <Button fullWidth variant="outlined" startIcon={<Google />}>Google</Button>
+            <Button fullWidth variant="outlined" startIcon={<Facebook />}>Facebook</Button>
           </Stack>
         </Card>
       </RegisterContainer>
