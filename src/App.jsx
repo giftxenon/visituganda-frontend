@@ -16,7 +16,7 @@ import CarRental from "./components/CarRental.jsx"; //routing problem
 function App() {
   return (
     <div>
-       <BrowserRouter>
+    
       <Routes>
 
         <Route path="/" element={<VisitUganda />} />
@@ -36,7 +36,7 @@ function App() {
         <Route path="/carRentals" element={<CarRental />} />
 
       </Routes>
-      </BrowserRouter>
+  
     </div>
   );
 }
