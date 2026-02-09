@@ -90,30 +90,29 @@ export default function LoginPage() {
     const password = document.getElementById("password").value;
 
     try {
-      console.log("Attempting login with:", loginField);
-
       const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: loginField, password }), // ensure backend expects 'username'
+        body: JSON.stringify({ username: loginField, password }), // matches backend LoginRequest
       });
 
-      const result = await response.json();
-      console.log("LOGIN RESPONSE:", result);
+      // Safely parse JSON, even if backend sends empty body
+      let result = {};
+      try {
+        result = await response.json();
+      } catch {
+        result = {};
+      }
 
       if (!response.ok) {
         throw new Error(result.message || "Invalid credentials");
       }
 
+      // ✅ Store JWT and username if received
       if (result.token) {
-        console.log("JWT received:", result.token);
-        // store JWT for future requests
         localStorage.setItem("jwtToken", result.token);
+        localStorage.setItem("username", loginField); // store username for dashboard
 
-        // Optional: store username/email for UI purposes
-        localStorage.setItem("username", loginField);
-
-        // navigate to protected page
         navigate("/customer/dashboard");
       } else {
         throw new Error("No token received from backend");
@@ -141,10 +140,7 @@ export default function LoginPage() {
             <Typography
               component="h1"
               variant="h4"
-              sx={{
-                width: "100%",
-                fontSize: "clamp(1.8rem, 6vw, 2.15rem)",
-              }}
+              sx={{ width: "100%", fontSize: "clamp(1.8rem, 6vw, 2.15rem)" }}
             >
               Login
             </Typography>
@@ -152,11 +148,7 @@ export default function LoginPage() {
             <Box
               component="form"
               onSubmit={handleSubmit}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: { xs: 1.5, sm: 2 },
-              }}
+              sx={{ display: "flex", flexDirection: "column", gap: { xs: 1.5, sm: 2 } }}
             >
               <FormControl>
                 <FormLabel>Email, Phone, or Username</FormLabel>

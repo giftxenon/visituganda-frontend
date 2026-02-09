@@ -84,31 +84,36 @@ export default function RegisterCustomer() {
         }
       );
 
-      console.log("📡 HTTP STATUS:", response.status);
+      // Safely parse JSON to avoid 'Unexpected end of JSON input'
+      let result = {};
+      try {
+        result = await response.json();
+      } catch {
+        result = {};
+      }
 
-      const result = await response.json();
       console.log("📥 BACKEND RESPONSE:", result);
 
       // ✅ SUCCESS CONDITION
-      if (response.ok && result.success) {
+      if (response.ok) {
         alert(result.message || "Registration successful!");
 
-        // ✅ STORE USERNAME FOR DASHBOARD
+        // Store username for dashboard
         localStorage.setItem("username", payload.username);
 
-        // ✅ STORE JWT IF BACKEND RETURNS TOKEN
+        // Store JWT if backend returns token
         if (result.token) {
           console.log("🛡 JWT RECEIVED:", result.token);
           localStorage.setItem("jwtToken", result.token);
         }
 
-        // Navigate to dashboard
         navigate("/customer/dashboard");
         return;
       }
 
       // ❌ FAILURE PATH
       alert(result.message || "Registration failed");
+
       if (result.errors) {
         console.log("⚠️ FIELD ERRORS:", result.errors);
         setErrors(result.errors);

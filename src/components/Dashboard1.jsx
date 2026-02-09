@@ -1,4 +1,4 @@
-import  { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react'; 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -37,28 +37,19 @@ function DashBoard() {
 
   // 🔹 Load username from localStorage on component mount
   useEffect(() => {
-    const storedUsername = localStorage.getItem('username'); // should be set during login/register
-    if(storedUsername) setUsername(storedUsername);
+    const storedUsername = localStorage.getItem('username'); // set during login/register
+    if (storedUsername) setUsername(storedUsername);
   }, []);
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
+  const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
+  const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
+  const handleCloseNavMenu = () => setAnchorElNav(null);
+  const handleCloseUserMenu = () => setAnchorElUser(null);
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
+  // 🔹 Logout function
   const handleLogout = () => {
-    localStorage.clear(); // 🔹 clear JWT and username
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('username');
     window.location.href = '/LoginPage'; // redirect to login page
   };
 
@@ -183,18 +174,17 @@ function DashBoard() {
             </Box>
 
             {/* User Avatar & Menu */}
-            <Box sx={{ flexGrow: 0 }}>
-              <Typography sx={{ color: 'white', mr: 2 }}>
-                Welcome {username || 'User'} {/* 🔹 Show username */}
+            <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography sx={{ color: 'white', fontWeight: 500 }}>
+                Welcome, {username || 'User'} {/* 🔹 Display username */}
               </Typography>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+                  <Avatar alt={username} src="/static/images/avatar/2.jpg" />
                 </IconButton>
               </Tooltip>
               <Menu
                 sx={{ mt: '45px' }}
-                id="menu-appbar"
                 anchorEl={anchorElUser}
                 anchorOrigin={{
                   vertical: 'top',
