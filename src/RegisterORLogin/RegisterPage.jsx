@@ -112,7 +112,10 @@ export default function RegisterCustomer() {
         body: JSON.stringify({ username, fullName, email: email || null, msisdn: msisdn || null, password, passwordConfirm }),
       });
 
+
+
       const result = await response.json();
+      console.log("REGISTER RESPONSE:", result);
       if (response.ok && result.success) {
         alert("Registration successful!");
         navigate("/customer/dashboard");

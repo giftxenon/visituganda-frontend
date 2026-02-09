@@ -18,6 +18,7 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+
 /* ===================== STYLES ===================== */
 
 const Card = styled(MuiCard)(({ theme }) => ({
