@@ -347,7 +347,7 @@ const VisitUganda = () => { // -------------------------------------------------
                 },
               }}
             >
-              REGISTER
+              SIGN UP
             </Button>
 
             <Button

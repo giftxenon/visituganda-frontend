@@ -168,7 +168,7 @@ export default function RegisterCustomer() {
               variant="contained"
               sx={{ gridColumn: { xs: "1", sm: "1 / 3" }, py: 1.5, backgroundColor: "#00a152" }}
             >
-              Register
+              Sign Up
             </Button>
           </Box>
 

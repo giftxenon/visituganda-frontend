@@ -18,7 +18,6 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-
 /* ===================== STYLES ===================== */
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -49,8 +48,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [mode] = React.useState("light");
-  const defaultTheme = createTheme({ palette: { mode } });
+  const defaultTheme = createTheme({ palette: { mode: "light" } });
 
   const [loginError, setLoginError] = React.useState(false);
   const [loginErrorMessage, setLoginErrorMessage] = React.useState("");
@@ -65,7 +63,7 @@ export default function LoginPage() {
 
     if (!loginField.value || loginField.value.length < 3) {
       setLoginError(true);
-      setLoginErrorMessage("Please enter email or phone number.");
+      setLoginErrorMessage("Please enter email, username, or phone number.");
       isValid = false;
     } else {
       setLoginError(false);
@@ -92,18 +90,38 @@ export default function LoginPage() {
     const password = document.getElementById("password").value;
 
     try {
+      console.log("Attempting login with:", loginField);
+
       const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: loginField, password }),
+        body: JSON.stringify({ username: loginField, password }), // ensure backend expects 'username'
       });
 
-      if (!response.ok) throw new Error("Invalid credentials");
+      const result = await response.json();
+      console.log("LOGIN RESPONSE:", result);
 
-      navigate("/customer/dashboard");
+      if (!response.ok) {
+        throw new Error(result.message || "Invalid credentials");
+      }
+
+      if (result.token) {
+        console.log("JWT received:", result.token);
+        // store JWT for future requests
+        localStorage.setItem("jwtToken", result.token);
+
+        // Optional: store username/email for UI purposes
+        localStorage.setItem("username", loginField);
+
+        // navigate to protected page
+        navigate("/customer/dashboard");
+      } else {
+        throw new Error("No token received from backend");
+      }
     } catch (error) {
+      console.error("Login error:", error);
       setLoginError(true);
-      setLoginErrorMessage("Invalid email/phone or password");
+      setLoginErrorMessage(error.message || "Invalid email/phone or password");
     }
   };
 
@@ -141,7 +159,7 @@ export default function LoginPage() {
               }}
             >
               <FormControl>
-                <FormLabel>Email or Phone</FormLabel>
+                <FormLabel>Email, Phone, or Username</FormLabel>
                 <TextField
                   id="loginField"
                   fullWidth
