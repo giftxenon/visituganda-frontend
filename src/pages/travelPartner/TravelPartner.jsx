@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import LocationOnIcon from '@mui/icons-material/LocationOn'; // Import MUI location icon
-import './CarRental.css'; // Import a CSS file for styling
 
+import UsecaseTemplate from "../../components/common/UsecaseTemplate";
 // Sample data for travel partners with placeholder URLs and locations
-const carRentalCompanies = [
+const travelPartnerCompanies = [
   {
     name: 'Joan Lisa',
     rating: 2.2,
@@ -59,43 +59,23 @@ const renderStars = (rating) => {
 function TravelPartner() {
   const [showCompanies, setShowCompanies] = useState(false);
 
-  const handleCarRentalClick = () => {
-    setShowCompanies((prev) => !prev);
+   const handleCompanyClick = (company) => {
+    // Example: if a modal exists for a company
+    // if (company.name === "Ngorongoro Lodge") setOpenCompany(company);
   };
 
-  return (
-    <div>
-      {/* AppBar */}
-      <div className="app-bar">
-        <h1>Travel Partners</h1>
-        <button onClick={handleCarRentalClick}>
-          {showCompanies ? 'Hide' : 'Show'} Travel Partners
-        </button>
-      </div>
 
-      {/* Travel Partners */}
-      {showCompanies && (
-        <div className="card-container">
-          {carRentalCompanies.map((company, index) => (
-            <div className="card" key={index}>
-              <img
-                className="card-image"
-                src={company.image || 'https://via.placeholder.com/300x150'} // Default placeholder
-                alt={company.name}
-              />
-              <h2>{company.name}</h2>
-              <p className="location">
-                <LocationOnIcon style={{ marginRight: '5px', verticalAlign: 'middle' }} /> {/* MUI location icon */}
-                {company.location}
-              </p>
-              <div className="rating">
-                {renderStars(company.rating)}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+  return (
+       <>
+         <UsecaseTemplate
+           title="Travel Partners"
+           items={travelPartnerCompanies}
+           onItemClick={handleCompanyClick}
+         />
+   
+         {/* Example modal could go here */}
+         {/* <AccommodationModal open={!!openCompany} handleClose={() => setOpenCompany(null)} /> */}
+       </>
   );
 }
 

@@ -1,0 +1,119 @@
+/* ================================
+   GENERAL WEB TEMPLATE – SHARED STYLES
+   Based on UsecaseTemplate.css
+   ================================ */
+
+/* Wrapper for entire page */
+.usecase-wrapper {
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ================================
+   APP BAR (Top Navigation)
+   ================================ */
+
+.app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #4caf50;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+}
+
+/* Left side of app bar (logo + title) */
+.app-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* UgMap logo */
+.ugmap-logo {
+  width: clamp(40px, 8vw, 90px);
+  height: auto;
+  flex-shrink: 0;
+}
+
+/* App title */
+.appbar-title {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  color: white;
+  font-size: clamp(1.2rem, 4vw, 2.5rem);
+  white-space: nowrap;
+}
+
+/* Right side of app bar */
+.app-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ================================
+   SIDEBAR
+   ================================ */
+
+.sidebar {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 16px 0;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  height: calc(100vh - 100px);
+}
+
+/* Sidebar item */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(76, 175, 80, 0.12);
+}
+
+/* Active sidebar item */
+.sidebar-item.active {
+  background-color: rgba(76, 175, 80, 0.18);
+  border-left: 4px solid #4caf50;
+}
+
+/* Sidebar icons */
+.sidebar-item-icon {
+  color: #4caf50;
+}
+
+/* ================================
+   MAIN CONTENT AREA
+   ================================ */
+
+.main-content {
+  background-color: #f5f7fa;
+  border-radius: 12px;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+
+@media (max-width: 600px) {
+  .appbar-title {
+    font-size: 20px;
+  }
+
+  .usecase-wrapper {
+    padding: 12px;
+  }
+}

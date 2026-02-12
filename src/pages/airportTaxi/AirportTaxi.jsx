@@ -1,8 +1,12 @@
 import { useState } from "react";
-import CompanyCard from "../AboutClient/Modals/CompanyCard"; // <-- IMPORT REUSABLE COMPONENT
+import CompanyCard from "../../AboutClient/Modals/CompanyCard"; // <-- IMPORT REUSABLE COMPONENT
+// import UsecaseTemplate from "../../common/UsecaseTemplate";
+import UsecaseTemplate from "../common/UsecaseTemplate";
+
+
 
 // Sample data for taxi companies
-const carRentalCompanies = [
+const AirportTaxiCompanies = [
   {
     id: 1,
     name: "Miles Transfer Uganda",
@@ -55,36 +59,17 @@ function AirportTaxi() {
   };
 
   return (
-    <div>
-      {/* AppBar */}
-      <div className="app-bar">
-        <h1>Airport Taxi</h1>
-        <button onClick={handleCarRentalClick}>
-          {showCompanies ? "Hide" : "Show"} Airport Taxis
-        </button>
-      </div>
-
-      {/* Taxi Companies */}
-      {showCompanies && (
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "16px",
-            marginTop: "20px",
-          }}
-        >
-          {carRentalCompanies.map((company) => (
-            <CompanyCard
-              key={company.id}
-              company={company}
-              onClick={handleCompanyClick}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
+    <>
+         <UsecaseTemplate
+           title="Airport Taxis"
+           items={AirportTaxiCompanies}
+           onItemClick={handleCompanyClick}
+         />
+   
+         {/* Example modal could go here */}
+         {/* <AccommodationModal open={!!openCompany} handleClose={() => setOpenCompany(null)} /> */}
+       </>
+       )
 }
 
 export default AirportTaxi;

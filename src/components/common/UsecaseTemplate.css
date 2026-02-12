@@ -1,0 +1,109 @@
+/* ================================
+   USE CASE TEMPLATE – SHARED STYLES
+   Matches UsecaseTemplate.jsx
+   ================================ */
+
+.usecase-wrapper {
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Header */
+.app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #4caf50;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+}
+
+.app-bar h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+   background-color: #4caf50;
+  color: white;
+}
+
+/* Cards container */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* Card */
+.card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.18);
+}
+
+/* Image */
+.card-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+/* Title */
+.card h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 6px 0;
+  color: #222;
+}
+
+/* Location */
+.location {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+/* Rating */
+.rating {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+/* Stars */
+.star {
+  color: #4caf50;
+  font-size: 20px;
+  margin-right: 3px;
+}
+
+.star.empty {
+  color: #dcdcdc;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .app-bar h1 {
+    font-size: 20px;
+  }
+
+  .card-image {
+    height: 150px;
+  }
+}
