@@ -1,6 +1,6 @@
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import BreadcrumbsNav from "../common/BreadcrumbsNav";
-import "./usecaseTemplate.css";
+import "./UsecaseTemplate.css";
 
 // ⭐ Rating stars helper
 const renderStars = (rating = 0) => {
