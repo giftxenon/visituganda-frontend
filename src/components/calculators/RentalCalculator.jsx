@@ -14,19 +14,116 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
+/**
+ * Currency → Representative Country (ISO 3166-1 alpha-2)
+ * Used for flag display
+ */
 const currencyToCountry = {
+  // Major
   USD: "us",
-  GBP: "gb",
   EUR: "eu",
+  GBP: "gb",
+  JPY: "jp",
+  CNY: "cn",
+  AUD: "au",
+  CAD: "ca",
+  CHF: "ch",
+
+  // Africa
   UGX: "ug",
   KES: "ke",
   TZS: "tz",
   RWF: "rw",
   NGN: "ng",
+  GHS: "gh",
   ZAR: "za",
-  CAD: "ca",
-  AUD: "au",
-  JPY: "jp",
+  XOF: "sn", // West African CFA
+  XAF: "cm", // Central African CFA
+  MAD: "ma",
+  EGP: "eg",
+  DZD: "dz",
+  ETB: "et",
+  ZMW: "zm",
+  MWK: "mw",
+  BWP: "bw",
+  NAD: "na",
+  MUR: "mu",
+  SCR: "sc",
+  TND: "tn",
+
+  // Americas
+  MXN: "mx",
+  BRL: "br",
+  ARS: "ar",
+  CLP: "cl",
+  COP: "co",
+  PEN: "pe",
+  UYU: "uy",
+  BOB: "bo",
+  DOP: "do",
+  JMD: "jm",
+  TTD: "tt",
+  BBD: "bb",
+
+  // Europe
+  NOK: "no",
+  SEK: "se",
+  DKK: "dk",
+  PLN: "pl",
+  CZK: "cz",
+  HUF: "hu",
+  RON: "ro",
+  BGN: "bg",
+  HRK: "hr",
+  ISK: "is",
+  RUB: "ru",
+  UAH: "ua",
+  TRY: "tr",
+
+  // Middle East
+  AED: "ae",
+  SAR: "sa",
+  QAR: "qa",
+  KWD: "kw",
+  BHD: "bh",
+  OMR: "om",
+  ILS: "il",
+  JOD: "jo",
+  LBP: "lb",
+  IRR: "ir",
+
+  // Asia
+  INR: "in",
+  PKR: "pk",
+  BDT: "bd",
+  LKR: "lk",
+  NPR: "np",
+  IDR: "id",
+  MYR: "my",
+  SGD: "sg",
+  THB: "th",
+  PHP: "ph",
+  VND: "vn",
+  KRW: "kr",
+  HKD: "hk",
+  TWD: "tw",
+  KZT: "kz",
+  UZS: "uz",
+  MMK: "mm",
+  KHR: "kh",
+  LAK: "la",
+
+  // Oceania
+  NZD: "nz",
+  FJD: "fj",
+  PGK: "pg",
+
+  // Crypto / special (no flags)
+  BTC: null,
+  ETH: null,
+  LTC: null,
+  XRP: null,
+  XDR: null,
 };
 
 export default function RentalCalculator({ dailyCost }) {
@@ -38,15 +135,16 @@ export default function RentalCalculator({ dailyCost }) {
   useEffect(() => {
     fetch("https://cdn.moneyconvert.net/api/latest.json")
       .then((res) => res.json())
-      .then((data) => setRates(data.rates));
+      .then((data) => setRates(data.rates))
+      .catch(() => setRates({}));
   }, []);
 
   const days = Math.max(endDate.diff(startDate, "day"), 1);
   const totalUSD = days * dailyCost;
-  const converted =
-    rates[currency] ? (totalUSD * rates[currency]).toFixed(2) : totalUSD;
 
-  const countryCode = currencyToCountry[currency];
+  const converted = rates[currency]
+    ? (totalUSD * rates[currency]).toFixed(2)
+    : totalUSD.toFixed(2);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -76,7 +174,7 @@ export default function RentalCalculator({ dailyCost }) {
             sx={{ flex: 1 }}
           />
 
-          {/* Currency Select with FLAGS */}
+          {/* Currency Select with Flags */}
           <FormControl sx={{ flex: 1 }}>
             <InputLabel>Currency</InputLabel>
             <Select

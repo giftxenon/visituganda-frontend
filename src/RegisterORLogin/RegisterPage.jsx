@@ -9,6 +9,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
+import CircularProgress from "@mui/material/CircularProgress";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 import { Google, Facebook } from "@mui/icons-material";
 import Box from "@mui/material/Box";
@@ -51,6 +52,7 @@ export default function RegisterCustomer() {
 
   const [errors, setErrors] = React.useState({});
   const [messages, setMessages] = React.useState({});
+  const [loading, setLoading] = React.useState(false);
 
   const clearErrors = () => {
     setErrors({});
@@ -59,7 +61,10 @@ export default function RegisterCustomer() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (loading) return;
+
     clearErrors();
+    setLoading(true);
 
     const formData = new FormData(event.currentTarget);
 
@@ -72,8 +77,6 @@ export default function RegisterCustomer() {
       passwordConfirm: formData.get("passwordConfirm"),
     };
 
-    console.log("📤 REGISTER PAYLOAD:", payload);
-
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/v1/auth/register/customer`,
@@ -84,26 +87,17 @@ export default function RegisterCustomer() {
         }
       );
 
-      // Safely parse JSON to avoid 'Unexpected end of JSON input'
       let result = {};
       try {
         result = await response.json();
-      } catch {
-        result = {};
-      }
+      } catch {}
 
-      console.log("📥 BACKEND RESPONSE:", result);
-
-      // ✅ SUCCESS CONDITION
       if (response.ok) {
         alert(result.message || "Registration successful!");
 
-        // Store username for dashboard
         localStorage.setItem("username", payload.username);
 
-        // Store JWT if backend returns token
         if (result.token) {
-          console.log("🛡 JWT RECEIVED:", result.token);
           localStorage.setItem("jwtToken", result.token);
         }
 
@@ -111,17 +105,18 @@ export default function RegisterCustomer() {
         return;
       }
 
-      // ❌ FAILURE PATH
       alert(result.message || "Registration failed");
 
       if (result.errors) {
-        console.log("⚠️ FIELD ERRORS:", result.errors);
         setErrors(result.errors);
         setMessages(result.errors);
       }
+
     } catch (error) {
-      console.error("🚨 NETWORK / SERVER ERROR:", error);
+      console.error("🚨 Registration error:", error);
       alert("Cannot reach server. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -146,41 +141,80 @@ export default function RegisterCustomer() {
           >
             <FormControl>
               <FormLabel>Username *</FormLabel>
-              <TextField name="username" required fullWidth error={!!errors.username} helperText={messages.username} />
+              <TextField
+                name="username"
+                required
+                fullWidth
+                disabled={loading}
+                error={!!errors.username}
+                helperText={messages.username}
+              />
             </FormControl>
 
             <FormControl>
               <FormLabel>Full Name *</FormLabel>
-              <TextField name="fullName" required fullWidth error={!!errors.fullName} helperText={messages.fullName} />
+              <TextField
+                name="fullName"
+                required
+                fullWidth
+                disabled={loading}
+                error={!!errors.fullName}
+                helperText={messages.fullName}
+              />
             </FormControl>
 
             <FormControl>
               <FormLabel>Email</FormLabel>
-              <TextField name="email" fullWidth />
+              <TextField name="email" fullWidth disabled={loading} />
             </FormControl>
 
             <FormControl>
               <FormLabel>Phone Number</FormLabel>
-              <TextField name="msisdn" fullWidth />
+              <TextField name="msisdn" fullWidth disabled={loading} />
             </FormControl>
 
             <FormControl>
               <FormLabel>Password *</FormLabel>
-              <TextField name="password" type="password" required fullWidth error={!!errors.password} helperText={messages.password} />
+              <TextField
+                name="password"
+                type="password"
+                required
+                fullWidth
+                disabled={loading}
+                error={!!errors.password}
+                helperText={messages.password}
+              />
             </FormControl>
 
             <FormControl>
               <FormLabel>Confirm Password *</FormLabel>
-              <TextField name="passwordConfirm" type="password" required fullWidth error={!!errors.passwordConfirm} helperText={messages.passwordConfirm} />
+              <TextField
+                name="passwordConfirm"
+                type="password"
+                required
+                fullWidth
+                disabled={loading}
+                error={!!errors.passwordConfirm}
+                helperText={messages.passwordConfirm}
+              />
             </FormControl>
 
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ gridColumn: { xs: "1", sm: "1 / 3" }, py: 1.5, backgroundColor: "#00a152" }}
+              disabled={loading}
+              sx={{
+                gridColumn: { xs: "1", sm: "1 / 3" },
+                py: 1.5,
+                backgroundColor: "#00a152",
+              }}
             >
-              Sign Up
+              {loading ? (
+                <CircularProgress size={24} sx={{ color: "white" }} />
+              ) : (
+                "Sign Up"
+              )}
             </Button>
           </Box>
 
@@ -192,12 +226,18 @@ export default function RegisterCustomer() {
           </Typography>
 
           <Divider sx={{ my: 4 }}>
-            <Typography sx={{ color: "text.secondary" }}>or continue with</Typography>
+            <Typography sx={{ color: "text.secondary" }}>
+              or continue with
+            </Typography>
           </Divider>
 
           <Stack spacing={2}>
-            <Button fullWidth variant="outlined" startIcon={<Google />}>Google</Button>
-            <Button fullWidth variant="outlined" startIcon={<Facebook />}>Facebook</Button>
+            <Button fullWidth variant="outlined" startIcon={<Google />} disabled={loading}>
+              Google
+            </Button>
+            <Button fullWidth variant="outlined" startIcon={<Facebook />} disabled={loading}>
+              Facebook
+            </Button>
           </Stack>
         </Card>
       </RegisterContainer>

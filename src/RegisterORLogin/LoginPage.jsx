@@ -12,6 +12,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
+import CircularProgress from "@mui/material/CircularProgress";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 import { Google, Facebook } from "@mui/icons-material";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
@@ -54,6 +55,7 @@ export default function LoginPage() {
   const [loginErrorMessage, setLoginErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const validateInputs = () => {
     const loginField = document.getElementById("loginField");
@@ -84,7 +86,9 @@ export default function LoginPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!validateInputs()) return;
+    if (!validateInputs() || loading) return;
+
+    setLoading(true);
 
     const loginField = document.getElementById("loginField").value;
     const password = document.getElementById("password").value;
@@ -93,34 +97,32 @@ export default function LoginPage() {
       const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: loginField, password }), // matches backend LoginRequest
+        body: JSON.stringify({ username: loginField, password }),
       });
 
-      // Safely parse JSON, even if backend sends empty body
       let result = {};
       try {
         result = await response.json();
-      } catch {
-        result = {};
-      }
+      } catch {}
 
       if (!response.ok) {
         throw new Error(result.message || "Invalid credentials");
       }
 
-      // ✅ Store JWT and username if received
       if (result.token) {
         localStorage.setItem("jwtToken", result.token);
-        localStorage.setItem("username", loginField); // store username for dashboard
-
+        localStorage.setItem("username", loginField);
         navigate("/customer/dashboard");
       } else {
         throw new Error("No token received from backend");
       }
+
     } catch (error) {
       console.error("Login error:", error);
       setLoginError(true);
-      setLoginErrorMessage(error.message || "Invalid email/phone or password");
+      setLoginErrorMessage(error.message || "Invalid login details");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -148,7 +150,7 @@ export default function LoginPage() {
             <Box
               component="form"
               onSubmit={handleSubmit}
-              sx={{ display: "flex", flexDirection: "column", gap: { xs: 1.5, sm: 2 } }}
+              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             >
               <FormControl>
                 <FormLabel>Email, Phone, or Username</FormLabel>
@@ -158,6 +160,7 @@ export default function LoginPage() {
                   placeholder="bensample@gmail.com"
                   error={loginError}
                   helperText={loginErrorMessage}
+                  disabled={loading}
                 />
               </FormControl>
 
@@ -170,11 +173,12 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   error={passwordError}
                   helperText={passwordErrorMessage}
+                  disabled={loading}
                 />
               </FormControl>
 
               <FormControlLabel
-                control={<Checkbox color="primary" />}
+                control={<Checkbox color="primary" disabled={loading} />}
                 label="Remember me"
               />
 
@@ -182,9 +186,14 @@ export default function LoginPage() {
                 type="submit"
                 fullWidth
                 variant="contained"
+                disabled={loading}
                 sx={{ backgroundColor: "#00a152" }}
               >
-                Sign in
+                {loading ? (
+                  <CircularProgress size={24} sx={{ color: "white" }} />
+                ) : (
+                  "Sign in"
+                )}
               </Button>
 
               <Typography sx={{ textAlign: "center" }}>
@@ -209,6 +218,7 @@ export default function LoginPage() {
                 variant="outlined"
                 startIcon={<Google />}
                 sx={{ color: "#00a152", borderColor: "#00a152" }}
+                disabled={loading}
               >
                 Sign in with Google
               </Button>
@@ -218,6 +228,7 @@ export default function LoginPage() {
                 variant="outlined"
                 startIcon={<Facebook />}
                 sx={{ color: "#00a152", borderColor: "#00a152" }}
+                disabled={loading}
               >
                 Sign in with Facebook
               </Button>
