@@ -1,14 +1,26 @@
 // src/components/dashboard/DashboardHome.jsx
+
 import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function DashboardHome() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    // Get username saved after login
+    const storedUsername = localStorage.getItem("username");
+
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
 
   return (
     <Box>
-      <Typography variant="h4" fontWeight={600}   mt={5} mb={2} gutterBottom>
-        Welcome Gyökeres !👋
+      <Typography variant="h4" fontWeight={600} mt={5} mb={2} gutterBottom>
+        Welcome {username || "Guest"}! 👋
       </Typography>
 
       <Typography variant="h6" fontWeight={300} color="text.secondary" mb={5}>
