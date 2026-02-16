@@ -10,8 +10,10 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import CircularProgress from "@mui/material/CircularProgress";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
-import { Google, Facebook } from "@mui/icons-material";
+import { Google, Facebook, Visibility, VisibilityOff } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 
@@ -53,6 +55,9 @@ export default function RegisterCustomer() {
   const [errors, setErrors] = React.useState({});
   const [messages, setMessages] = React.useState({});
   const [loading, setLoading] = React.useState(false);
+
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const clearErrors = () => {
     setErrors({});
@@ -111,7 +116,6 @@ export default function RegisterCustomer() {
         setErrors(result.errors);
         setMessages(result.errors);
       }
-
     } catch (error) {
       console.error("🚨 Registration error:", error);
       alert("Cannot reach server. Please try again.");
@@ -125,7 +129,11 @@ export default function RegisterCustomer() {
       <CssBaseline />
       <RegisterContainer>
         <Card variant="outlined">
-          <Typography component="h1" variant="h4" sx={{ textAlign: "center", mb: 3 }}>
+          <Typography
+            component="h1"
+            variant="h4"
+            sx={{ textAlign: "center", mb: 3 }}
+          >
             Create Account
           </Typography>
 
@@ -177,12 +185,24 @@ export default function RegisterCustomer() {
               <FormLabel>Password *</FormLabel>
               <TextField
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 fullWidth
                 disabled={loading}
                 error={!!errors.password}
                 helperText={messages.password}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </FormControl>
 
@@ -190,12 +210,30 @@ export default function RegisterCustomer() {
               <FormLabel>Confirm Password *</FormLabel>
               <TextField
                 name="passwordConfirm"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 required
                 fullWidth
                 disabled={loading}
                 error={!!errors.passwordConfirm}
                 helperText={messages.passwordConfirm}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() =>
+                          setShowConfirmPassword((prev) => !prev)
+                        }
+                        edge="end"
+                      >
+                        {showConfirmPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </FormControl>
 
@@ -220,7 +258,11 @@ export default function RegisterCustomer() {
 
           <Typography textAlign="center" sx={{ mt: 2 }}>
             Already have an account?{" "}
-            <Link component={RouterLink} to="/LoginPage" sx={{ color: "#00a152" }}>
+            <Link
+              component={RouterLink}
+              to="/LoginPage"
+              sx={{ color: "#00a152" }}
+            >
               Log in here
             </Link>
           </Typography>

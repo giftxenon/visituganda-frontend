@@ -13,8 +13,15 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import CircularProgress from "@mui/material/CircularProgress";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
-import { Google, Facebook } from "@mui/icons-material";
+import {
+  Google,
+  Facebook,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -56,6 +63,8 @@ export default function LoginPage() {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const validateInputs = () => {
     const loginField = document.getElementById("loginField");
@@ -116,7 +125,6 @@ export default function LoginPage() {
       } else {
         throw new Error("No token received from backend");
       }
-
     } catch (error) {
       console.error("Login error:", error);
       setLoginError(true);
@@ -168,12 +176,29 @@ export default function LoginPage() {
                 <FormLabel>Password</FormLabel>
                 <TextField
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   fullWidth
                   placeholder="••••••••"
                   error={passwordError}
                   helperText={passwordErrorMessage}
                   disabled={loading}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          edge="end"
+                          disabled={loading}
+                        >
+                          {showPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </FormControl>
 
