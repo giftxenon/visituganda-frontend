@@ -65,64 +65,98 @@ export default function RegisterCustomer() {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (loading) return;
+  event.preventDefault();
+  if (loading) return;
 
-    clearErrors();
-    setLoading(true);
+  console.log("🟢 SUBMIT CLICKED");
 
-    const formData = new FormData(event.currentTarget);
+  clearErrors();
 
-    const payload = {
-      username: (formData.get("username") || "").trim(),
-      fullName: (formData.get("fullName") || "").trim(),
-      email: formData.get("email") || null,
-      msisdn: formData.get("msisdn") || null,
-      password: formData.get("password"),
-      passwordConfirm: formData.get("passwordConfirm"),
-    };
+  // 🔍 Log form element
+  console.log("🟡 form element:", event.currentTarget);
 
+  // ⚠️ IMPORTANT: do NOT set loading yet
+  const formData = new FormData(event.currentTarget);
+
+  // 🔍 Log raw FormData entries
+  console.log("🟣 RAW FORMDATA ENTRIES:");
+  for (let [key, value] of formData.entries()) {
+    console.log(`   ${key}:`, value);
+  }
+
+  // 🔍 Log individual fields
+  const username = (formData.get("username") || "").trim();
+  const fullName = (formData.get("fullName") || "").trim();
+
+  const email = (formData.get("email") || "").trim();
+  const msisdn = (formData.get("msisdn") || "").trim();
+
+  // const email = formData.get("email"); why trim ? above on line 92 and 91
+   // const msisdn = formData.get("msisdn");
+  const password = formData.get("password");
+  const passwordConfirm = formData.get("passwordConfirm");
+
+  console.log("🔵 PARSED VALUES:");
+  console.log("username:", username);
+  console.log("fullName:", fullName);
+  console.log("email:", email);
+  console.log("msisdn:", msisdn);
+  console.log("password:", password);
+  console.log("passwordConfirm:", passwordConfirm);
+
+const payload = {
+  username,
+  fullName,
+  email,
+  msisdn,
+  password,
+  passwordConfirm,
+};
+
+  console.log("🟠 FINAL PAYLOAD SENT TO BACKEND:", payload);
+
+  // NOW disable inputs
+  setLoading(true);
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/auth/register/customer`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    console.log("🟢 RESPONSE STATUS:", response.status);
+
+    let result = {};
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/auth/register/customer`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      let result = {};
-      try {
-        result = await response.json();
-      } catch {}
-
-      if (response.ok) {
-        alert(result.message || "Registration successful!");
-
-        localStorage.setItem("username", payload.username);
-
-        if (result.token) {
-          localStorage.setItem("jwtToken", result.token);
-        }
-
-        navigate("/customer/dashboard");
-        return;
-      }
-
-      alert(result.message || "Registration failed");
-
-      if (result.errors) {
-        setErrors(result.errors);
-        setMessages(result.errors);
-      }
-    } catch (error) {
-      console.error("🚨 Registration error:", error);
-      alert("Cannot reach server. Please try again.");
-    } finally {
-      setLoading(false);
+      result = await response.json();
+      console.log("🟢 RESPONSE BODY:", result);
+    } catch {
+      console.warn("⚠️ Response body is not JSON");
     }
-  };
+
+    if (response.ok) {
+      console.log("✅ REGISTRATION SUCCESS");
+      navigate("/customer/dashboard");
+      return;
+    }
+
+    console.warn("❌ REGISTRATION FAILED");
+
+    if (result.errors) {
+      console.log("🔴 BACKEND VALIDATION ERRORS:", result.errors);
+      setErrors(result.errors);
+      setMessages(result.errors);
+    }
+  } catch (error) {
+    console.error("🚨 FETCH ERROR:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <ThemeProvider theme={defaultTheme}>
