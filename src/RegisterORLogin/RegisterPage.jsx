@@ -1,20 +1,29 @@
 import React from "react";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
-import FormLabel from "@mui/material/FormLabel";
-import FormControl from "@mui/material/FormControl";
-import Link from "@mui/material/Link";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import MuiCard from "@mui/material/Card";
-import CircularProgress from "@mui/material/CircularProgress";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
+import {
+  Button,
+  CssBaseline,
+  Divider,
+  FormLabel,
+  FormControl,
+  Link,
+  TextField,
+  Typography,
+  Stack,
+  Card as MuiCard,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  Box,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
-import { Google, Facebook, Visibility, VisibilityOff } from "@mui/icons-material";
-import Box from "@mui/material/Box";
+import {
+  Google,
+  Facebook,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -42,14 +51,13 @@ const RegisterContainer = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundImage:
     "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
-  backgroundRepeat: "no-repeat",
   justifyContent: "center",
 }));
 
 /* ===================== COMPONENT ===================== */
 
 export default function RegisterCustomer() {
-  const defaultTheme = createTheme({ palette: { mode: "light" } });
+  const theme = createTheme({ palette: { mode: "light" } });
   const navigate = useNavigate();
 
   const [errors, setErrors] = React.useState({});
@@ -59,115 +67,96 @@ export default function RegisterCustomer() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
+  const [successOpen, setSuccessOpen] = React.useState(false);
+
   const clearErrors = () => {
     setErrors({});
     setMessages({});
   };
 
   const handleSubmit = async (event) => {
-  event.preventDefault();
-  if (loading) return;
+    event.preventDefault();
+    if (loading) return;
 
-  console.log("🟢 SUBMIT CLICKED");
+    clearErrors();
 
-  clearErrors();
+    const formData = new FormData(event.currentTarget);
 
-  // 🔍 Log form element
-  console.log("🟡 form element:", event.currentTarget);
+    const username = (formData.get("username") || "").trim();
+    const fullName = (formData.get("fullName") || "").trim();
+    const email = (formData.get("email") || "").trim();
+    const msisdn = (formData.get("msisdn") || "").trim();
+    const password = formData.get("password");
+    const passwordConfirm = formData.get("passwordConfirm");
 
-  // ⚠️ IMPORTANT: do NOT set loading yet
-  const formData = new FormData(event.currentTarget);
+    const payload = {
+      username,
+      fullName,
+      email,
+      msisdn,
+      password,
+      passwordConfirm,
+    };
 
-  // 🔍 Log raw FormData entries
-  console.log("🟣 RAW FORMDATA ENTRIES:");
-  for (let [key, value] of formData.entries()) {
-    console.log(`   ${key}:`, value);
-  }
+    setLoading(true);
 
-  // 🔍 Log individual fields
-  const username = (formData.get("username") || "").trim();
-  const fullName = (formData.get("fullName") || "").trim();
-
-  const email = (formData.get("email") || "").trim();
-  const msisdn = (formData.get("msisdn") || "").trim();
-
-  // const email = formData.get("email"); why trim ? above on line 92 and 91
-   // const msisdn = formData.get("msisdn");
-  const password = formData.get("password");
-  const passwordConfirm = formData.get("passwordConfirm");
-
-  console.log("🔵 PARSED VALUES:");
-  console.log("username:", username);
-  console.log("fullName:", fullName);
-  console.log("email:", email);
-  console.log("msisdn:", msisdn);
-  console.log("password:", password);
-  console.log("passwordConfirm:", passwordConfirm);
-
-const payload = {
-  username,
-  fullName,
-  email,
-  msisdn,
-  password,
-  passwordConfirm,
-};
-
-  console.log("🟠 FINAL PAYLOAD SENT TO BACKEND:", payload);
-
-  // NOW disable inputs
-  setLoading(true);
-
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/auth/register/customer`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    );
-
-    console.log("🟢 RESPONSE STATUS:", response.status);
-
-    let result = {};
     try {
-      result = await response.json();
-      console.log("🟢 RESPONSE BODY:", result);
-    } catch {
-      console.warn("⚠️ Response body is not JSON");
-    }
+      const response = await fetch(
+        `${API_BASE_URL}/api/v1/auth/register/customer`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
-    if (response.ok) {
-      console.log("✅ REGISTRATION SUCCESS");
-      navigate("/customer/dashboard");
-      return;
-    }
+      const result = await response.json().catch(() => ({}));
 
-    console.warn("❌ REGISTRATION FAILED");
+      if (response.ok) {
+        // ✅ SAVE USERNAME FOR DASHBOARD
+        localStorage.setItem("username", username);
 
-    if (result.errors) {
-      console.log("🔴 BACKEND VALIDATION ERRORS:", result.errors);
-      setErrors(result.errors);
-      setMessages(result.errors);
+        // ✅ SHOW SUCCESS POPUP
+        setSuccessOpen(true);
+
+        // ✅ REDIRECT AFTER SHORT DELAY
+        setTimeout(() => {
+          navigate("/customer/dashboard");
+        }, 1500);
+
+        return;
+      }
+
+      if (result.errors) {
+        setErrors(result.errors);
+        setMessages(result.errors);
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("🚨 FETCH ERROR:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
+
+      {/* ✅ SUCCESS POPUP */}
+      <Snackbar
+        open={successOpen}
+        autoHideDuration={2000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        onClose={() => setSuccessOpen(false)}
+      >
+        <Alert severity="success" variant="filled">
+          Registration successful 🎉 Redirecting…
+        </Alert>
+      </Snackbar>
+
       <RegisterContainer>
         <Card variant="outlined">
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ textAlign: "center", mb: 3 }}
-          >
+          <Typography variant="h4" textAlign="center" mb={3}>
             Create Account
           </Typography>
 
@@ -186,7 +175,6 @@ const payload = {
               <TextField
                 name="username"
                 required
-                fullWidth
                 disabled={loading}
                 error={!!errors.username}
                 helperText={messages.username}
@@ -198,7 +186,6 @@ const payload = {
               <TextField
                 name="fullName"
                 required
-                fullWidth
                 disabled={loading}
                 error={!!errors.fullName}
                 helperText={messages.fullName}
@@ -207,12 +194,12 @@ const payload = {
 
             <FormControl>
               <FormLabel>Email</FormLabel>
-              <TextField name="email" fullWidth disabled={loading} />
+              <TextField name="email" disabled={loading} />
             </FormControl>
 
             <FormControl>
               <FormLabel>Phone Number</FormLabel>
-              <TextField name="msisdn" fullWidth disabled={loading} />
+              <TextField name="msisdn" disabled={loading} />
             </FormControl>
 
             <FormControl>
@@ -221,7 +208,6 @@ const payload = {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 required
-                fullWidth
                 disabled={loading}
                 error={!!errors.password}
                 helperText={messages.password}
@@ -229,7 +215,7 @@ const payload = {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() => setShowPassword((prev) => !prev)}
+                        onClick={() => setShowPassword((p) => !p)}
                         edge="end"
                       >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -246,7 +232,6 @@ const payload = {
                 name="passwordConfirm"
                 type={showConfirmPassword ? "text" : "password"}
                 required
-                fullWidth
                 disabled={loading}
                 error={!!errors.passwordConfirm}
                 helperText={messages.passwordConfirm}
@@ -255,7 +240,7 @@ const payload = {
                     <InputAdornment position="end">
                       <IconButton
                         onClick={() =>
-                          setShowConfirmPassword((prev) => !prev)
+                          setShowConfirmPassword((p) => !p)
                         }
                         edge="end"
                       >
@@ -290,28 +275,22 @@ const payload = {
             </Button>
           </Box>
 
-          <Typography textAlign="center" sx={{ mt: 2 }}>
+          <Typography textAlign="center" mt={2}>
             Already have an account?{" "}
-            <Link
-              component={RouterLink}
-              to="/LoginPage"
-              sx={{ color: "#00a152" }}
-            >
+            <Link component={RouterLink} to="/LoginPage" sx={{ color: "#00a152" }}>
               Log in here
             </Link>
           </Typography>
 
           <Divider sx={{ my: 4 }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              or continue with
-            </Typography>
+            <Typography color="text.secondary">or continue with</Typography>
           </Divider>
 
           <Stack spacing={2}>
-            <Button fullWidth variant="outlined" startIcon={<Google />} disabled={loading}>
+            <Button fullWidth variant="outlined" startIcon={<Google />} disabled>
               Google
             </Button>
-            <Button fullWidth variant="outlined" startIcon={<Facebook />} disabled={loading}>
+            <Button fullWidth variant="outlined" startIcon={<Facebook />} disabled>
               Facebook
             </Button>
           </Stack>

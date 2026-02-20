@@ -177,7 +177,7 @@ function DashBoard() {
               gap: 1,
             }}
           >
-            <Typography>Hi, {username || 'User'}</Typography>
+            <Typography>Hi, {username || 'there'}</Typography>
             <Tooltip title="Account">
               <Avatar />
             </Tooltip>
@@ -216,20 +216,29 @@ function DashBoard() {
         </Drawer>
       )}
 
-      {/* Main Content */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          mt: 8,
-          backgroundColor: '#f5f7fa',
-          minHeight: '100vh',
-        }}
-      >
-        <Outlet />
-      </Box>
+  {/* Main Content */}
+<Box
+  component="main"
+  sx={{
+    flexGrow: 1,
+    p: 3,
+    mt: 9,
+    backgroundColor: '#f5f7fa',
+    minHeight: '100vh',
+  }}
+>
+  <Box
+    sx={{
+      maxWidth: 1500,
+      mx: "auto",
+    }}
+  >
+    <Outlet />
+  </Box>
+</Box>
     </Box>
+
+
   );
 }
 

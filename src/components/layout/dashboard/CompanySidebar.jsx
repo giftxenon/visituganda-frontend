@@ -26,7 +26,7 @@ export default function CompanySidebar({ company }) {
       <Typography variant="subtitle1" fontWeight={600}>
         Chat about this car
       </Typography>
-      <TextField label="Write your inquiry..." multiline rows={4} fullWidth />
+      <TextField label="Write your inquiry..." multiline rows={8} fullWidth />
       <Button variant="contained" color="success" fullWidth>
         Send Message
       </Button>
