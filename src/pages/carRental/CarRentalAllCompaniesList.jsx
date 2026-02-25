@@ -1,0 +1,101 @@
+import { useNavigate } from "react-router-dom";
+import UsecaseTemplate from "../../components/common/UsecaseTemplate";
+import { useEffect, useState } from "react";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+// Hardcoded car rental companies (fallback / initial display)
+const carRentalCompanies = [
+  {
+    name: "Roadtrip Africa",
+    rating: 4.5,
+    image: "/imagesFolderO/backRover.jpg",
+    location: "Kampala, Uganda",
+  },
+  {
+    name: "4X4 Car Hire Kampala",
+    rating: 3.2,
+    image: "/imagesFolderO/twoLRback.jpg",
+    location: "Kampala, Uganda",
+  },
+  {
+    name: "Self Drive Uganda",
+    rating: 4.8,
+    image: "/imagesFolderO/twolandFront.jpg",
+    location: "Entebbe, Uganda",
+  },
+  {
+    name: "Jungle Uganda Car Rental",
+    rating: 4.3,
+    image: "/imagesFolderO/landrover1.jpg",
+    location: "Jinja, Uganda",
+  },
+  {
+    name: "Your Drive Uganda",
+    rating: 3.5,
+    image: "/imagesFolderO/landRover2.jpg",
+    location: "Mbarara, Uganda",
+  },
+];
+
+function CarRental() {
+  const navigate = useNavigate();
+  const [newBusinesses, setNewBusinesses] = useState([]);
+
+  useEffect(() => {
+    async function fetchNewBusinesses() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/v1/businesses/all`);
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        // ✅ FILTER BY BACKEND ENUM: CAR_RENTAL
+        const formatted = data
+          .filter((b) => b.category === "CAR_RENTAL")
+          .map((b) => ({
+            name: b.companyName,
+            rating: b.rating ?? 4.5,
+            image: b.id
+              ? `${API_BASE_URL}/api/v1/businesses/logo/${b.id}`
+              : "/imagesFolderO/defaultCar.jpg",
+            location: b.location || "Uganda",
+          }));
+
+        setNewBusinesses(formatted);
+      } catch (err) {
+        console.error("Failed to fetch car rental businesses:", err);
+        setNewBusinesses([]); // fail safely
+      }
+    }
+
+    fetchNewBusinesses();
+  }, []);
+
+  const handleCompanyClick = (company) => {
+    const slug = company.name.toLowerCase().replace(/\s+/g, "-");
+
+    navigate(`/customer/dashboard/services/car-rentals/${slug}`, {
+      state: { company },
+    });
+  };
+
+  // ✅ Combine backend data first, fallback only if empty
+  //const allCompanies =
+   // newBusinesses.length > 0 ? newBusinesses : carRentalCompanies;
+
+    // ✅ Always combine both
+const allCompanies = [...carRentalCompanies, ...newBusinesses]; 
+  return (
+    <UsecaseTemplate
+      title="Car Rentals"
+      items={allCompanies}
+      onItemClick={handleCompanyClick}
+    />
+  );
+}
+
+export default CarRental;

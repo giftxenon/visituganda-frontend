@@ -63,7 +63,6 @@ export default function LoginPage() {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-
   const [showPassword, setShowPassword] = React.useState(false);
 
   const validateInputs = () => {
@@ -109,21 +108,20 @@ export default function LoginPage() {
         body: JSON.stringify({ loginField, password }),
       });
 
-      let result = {};
-      try {
-        result = await response.json();
-      } catch {}
+      const result = await response.json();
 
       if (!response.ok) {
         throw new Error(result.message || "Invalid credentials");
       }
 
+      // ✅ SUCCESS
       if (result.token) {
         localStorage.setItem("jwtToken", result.token);
-        localStorage.setItem("username", loginField);
-        navigate("/customer/dashboard");
-      } else {
-        throw new Error("No token received from backend");
+        localStorage.setItem("userType", result.userType);
+        localStorage.setItem("username", result.username);
+
+        // 🔥 Trust backend redirect
+        navigate(result.redirectUrl);
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -190,11 +188,7 @@ export default function LoginPage() {
                           edge="end"
                           disabled={loading}
                         >
-                          {showPassword ? (
-                            <VisibilityOff />
-                          ) : (
-                            <Visibility />
-                          )}
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
                     ),

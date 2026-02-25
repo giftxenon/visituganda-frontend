@@ -18,18 +18,12 @@ import {
   Alert,
 } from "@mui/material";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
-import {
-  Google,
-  Facebook,
-  Visibility,
-  VisibilityOff,
-} from "@mui/icons-material";
+import { Google, Facebook, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 /* ===================== STYLES ===================== */
-
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -55,7 +49,6 @@ const RegisterContainer = styled(Stack)(({ theme }) => ({
 }));
 
 /* ===================== COMPONENT ===================== */
-
 export default function RegisterCustomer() {
   const theme = createTheme({ palette: { mode: "light" } });
   const navigate = useNavigate();
@@ -63,10 +56,10 @@ export default function RegisterCustomer() {
   const [errors, setErrors] = React.useState({});
   const [messages, setMessages] = React.useState({});
   const [loading, setLoading] = React.useState(false);
+  const [accountType, setAccountType] = React.useState(null);
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-
   const [successOpen, setSuccessOpen] = React.useState(false);
 
   const clearErrors = () => {
@@ -76,6 +69,7 @@ export default function RegisterCustomer() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!accountType) return; // Ensure a button was clicked
     if (loading) return;
 
     clearErrors();
@@ -96,34 +90,42 @@ export default function RegisterCustomer() {
       msisdn,
       password,
       passwordConfirm,
+      accountType,
     };
 
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/auth/register/customer`,
-        {
+      let response;
+      if (accountType === "tourist") {
+        // ✅ Customer API
+        response = await fetch(`${API_BASE_URL}/api/v1/auth/register/customer`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
-        }
-      );
+        });
+      } else if (accountType === "provider") {
+        // ⚠️ Placeholder API for Service Provider
+      response = await fetch(`${API_BASE_URL}/api/v1/auth/register/business`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
+});
+      }
 
       const result = await response.json().catch(() => ({}));
 
       if (response.ok) {
-        // ✅ SAVE USERNAME FOR DASHBOARD
         localStorage.setItem("username", username);
-
-        // ✅ SHOW SUCCESS POPUP
         setSuccessOpen(true);
 
-        // ✅ REDIRECT AFTER SHORT DELAY
         setTimeout(() => {
-          navigate("/customer/dashboard");
+          if (accountType === "tourist") {
+            navigate("/customer/dashboard");
+          } else if (accountType === "provider") {
+            navigate("/business/dashboard");
+          }
         }, 1500);
-
         return;
       }
 
@@ -135,6 +137,7 @@ export default function RegisterCustomer() {
       console.error("Registration error:", error);
     } finally {
       setLoading(false);
+      setAccountType(null);
     }
   };
 
@@ -142,7 +145,6 @@ export default function RegisterCustomer() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
 
-      {/* ✅ SUCCESS POPUP */}
       <Snackbar
         open={successOpen}
         autoHideDuration={2000}
@@ -170,6 +172,7 @@ export default function RegisterCustomer() {
               gap: 2,
             }}
           >
+            {/* ===================== FORM FIELDS ===================== */}
             <FormControl>
               <FormLabel>Username *</FormLabel>
               <TextField
@@ -239,16 +242,10 @@ export default function RegisterCustomer() {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() =>
-                          setShowConfirmPassword((p) => !p)
-                        }
+                        onClick={() => setShowConfirmPassword((p) => !p)}
                         edge="end"
                       >
-                        {showConfirmPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -256,23 +253,50 @@ export default function RegisterCustomer() {
               />
             </FormControl>
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              disabled={loading}
-              sx={{
-                gridColumn: { xs: "1", sm: "1 / 3" },
-                py: 1.5,
-                backgroundColor: "#00a152",
-              }}
+            {/* ===================== SIGN UP BUTTONS ===================== */}
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={2}
+              sx={{ gridColumn: { xs: "1", sm: "1 / 3" }, mt: 2 }}
             >
-              {loading ? (
-                <CircularProgress size={24} sx={{ color: "white" }} />
-              ) : (
-                "Sign Up"
-              )}
-            </Button>
+              <Button
+                variant="contained"
+                fullWidth
+                disabled={loading}
+                sx={{ py: 1.5, backgroundColor: "#099840" }}
+                onClick={() => {
+                  setAccountType("tourist");
+                  document.querySelector("form").dispatchEvent(
+                    new Event("submit", { cancelable: true, bubbles: true })
+                  );
+                }}
+              >
+                {loading && accountType === "tourist" ? (
+                  <CircularProgress size={24} sx={{ color: "white" }} />
+                ) : (
+                  "Sign Up as Tourist"
+                )}
+              </Button>
+
+              <Button
+                variant="contained"
+                fullWidth
+                disabled={loading}
+                sx={{ py: 1.5, backgroundColor: "#099840" }}
+                onClick={() => {
+                  setAccountType("provider");
+                  document.querySelector("form").dispatchEvent(
+                    new Event("submit", { cancelable: true, bubbles: true })
+                  );
+                }}
+              >
+                {loading && accountType === "provider" ? (
+                  <CircularProgress size={24} sx={{ color: "white" }} />
+                ) : (
+                  "Sign Up as Service Provider"
+                )}
+              </Button>
+            </Stack>
           </Box>
 
           <Typography textAlign="center" mt={2}>
