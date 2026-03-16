@@ -124,7 +124,7 @@ function BusinessDashboard() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar position="fixed" sx={{ zIndex: 1201, backgroundColor: '#1F7A7A' }}>
+      <AppBar position="fixed" sx={{ zIndex: 1201, backgroundColor: '#4caf50' }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {isMobile && (
@@ -147,7 +147,7 @@ function BusinessDashboard() {
                 whiteSpace: 'nowrap',
               }}
             >
-             Visit the Pearl
+          BOOK & TRAVEL
             </Typography>
           </Box>
           <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
@@ -206,10 +206,10 @@ function SidebarItem({ icon, text, active, onClick }) {
       onClick={onClick}
       sx={{
         backgroundColor: active ? 'rgba(25, 118, 210, 0.15)' : 'transparent',
-        borderLeft: active ? '4px solid #1F7A7A' : '4px solid transparent',
+        borderLeft: active ? '4px solid #4caf50' : '4px solid transparent',
       }}
     >
-      <ListItemIcon sx={{ color: '#1F7A7A' }}>{icon}</ListItemIcon>
+      <ListItemIcon sx={{ color: '#4caf50' }}>{icon}</ListItemIcon>
       <ListItemText primary={text} />
     </ListItemButton>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Button,
   CssBaseline,
@@ -23,7 +23,6 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-/* ===================== STYLES ===================== */
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -48,7 +47,6 @@ const RegisterContainer = styled(Stack)(({ theme }) => ({
   justifyContent: "center",
 }));
 
-/* ===================== COMPONENT ===================== */
 export default function RegisterCustomer() {
   const theme = createTheme({ palette: { mode: "light" } });
   const navigate = useNavigate();
@@ -56,7 +54,10 @@ export default function RegisterCustomer() {
   const [errors, setErrors] = React.useState({});
   const [messages, setMessages] = React.useState({});
   const [loading, setLoading] = React.useState(false);
-  const [accountType, setAccountType] = React.useState(null);
+
+  // useRef so accountType is available synchronously when handleSubmit fires.
+  // useState would still be null because React batches state updates.
+  const accountTypeRef = useRef(null);
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
@@ -69,13 +70,14 @@ export default function RegisterCustomer() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!accountType) return; // Ensure a button was clicked
+
+    const accountType = accountTypeRef.current;
+    if (!accountType) return;
     if (loading) return;
 
     clearErrors();
 
     const formData = new FormData(event.currentTarget);
-
     const username = (formData.get("username") || "").trim();
     const fullName = (formData.get("fullName") || "").trim();
     const email = (formData.get("email") || "").trim();
@@ -83,47 +85,43 @@ export default function RegisterCustomer() {
     const password = formData.get("password");
     const passwordConfirm = formData.get("passwordConfirm");
 
-    const payload = {
-      username,
-      fullName,
-      email,
-      msisdn,
-      password,
-      passwordConfirm,
-      accountType,
-    };
+    const payload = { username, fullName, email, msisdn, password, passwordConfirm, accountType };
 
     setLoading(true);
 
     try {
       let response;
       if (accountType === "tourist") {
-        // ✅ Customer API
         response = await fetch(`${API_BASE_URL}/api/v1/auth/register/customer`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
       } else if (accountType === "provider") {
-        // ⚠️ Placeholder API for Service Provider
-      response = await fetch(`${API_BASE_URL}/api/v1/auth/register/business`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload),
-});
+        response = await fetch(`${API_BASE_URL}/api/v1/auth/register/business`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
       }
 
       const result = await response.json().catch(() => ({}));
 
       if (response.ok) {
+        // Save JWT immediately so BusinessDetails can authenticate right away
+        if (result.token) {
+          localStorage.setItem("jwtToken", result.token);
+          localStorage.setItem("userType", result.userType || accountType);
+        }
         localStorage.setItem("username", username);
+
         setSuccessOpen(true);
 
         setTimeout(() => {
           if (accountType === "tourist") {
             navigate("/customer/dashboard");
           } else if (accountType === "provider") {
-            navigate("/business/dashboard");
+            navigate("/business/dashboard/createbusiness");
           }
         }, 1500);
         return;
@@ -137,7 +135,7 @@ export default function RegisterCustomer() {
       console.error("Registration error:", error);
     } finally {
       setLoading(false);
-      setAccountType(null);
+      accountTypeRef.current = null;
     }
   };
 
@@ -172,7 +170,6 @@ export default function RegisterCustomer() {
               gap: 2,
             }}
           >
-            {/* ===================== FORM FIELDS ===================== */}
             <FormControl>
               <FormLabel>Username *</FormLabel>
               <TextField
@@ -217,10 +214,7 @@ export default function RegisterCustomer() {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowPassword((p) => !p)}
-                        edge="end"
-                      >
+                      <IconButton onClick={() => setShowPassword((p) => !p)} edge="end">
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
@@ -241,10 +235,7 @@ export default function RegisterCustomer() {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowConfirmPassword((p) => !p)}
-                        edge="end"
-                      >
+                      <IconButton onClick={() => setShowConfirmPassword((p) => !p)} edge="end">
                         {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
@@ -253,7 +244,6 @@ export default function RegisterCustomer() {
               />
             </FormControl>
 
-            {/* ===================== SIGN UP BUTTONS ===================== */}
             <Stack
               direction={{ xs: "column", sm: "row" }}
               spacing={2}
@@ -265,17 +255,13 @@ export default function RegisterCustomer() {
                 disabled={loading}
                 sx={{ py: 1.5, backgroundColor: "#099840" }}
                 onClick={() => {
-                  setAccountType("tourist");
+                  accountTypeRef.current = "tourist";
                   document.querySelector("form").dispatchEvent(
                     new Event("submit", { cancelable: true, bubbles: true })
                   );
                 }}
               >
-                {loading && accountType === "tourist" ? (
-                  <CircularProgress size={24} sx={{ color: "white" }} />
-                ) : (
-                  "Sign Up as Tourist"
-                )}
+                {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Sign Up as Tourist"}
               </Button>
 
               <Button
@@ -284,17 +270,13 @@ export default function RegisterCustomer() {
                 disabled={loading}
                 sx={{ py: 1.5, backgroundColor: "#099840" }}
                 onClick={() => {
-                  setAccountType("provider");
+                  accountTypeRef.current = "provider";
                   document.querySelector("form").dispatchEvent(
                     new Event("submit", { cancelable: true, bubbles: true })
                   );
                 }}
               >
-                {loading && accountType === "provider" ? (
-                  <CircularProgress size={24} sx={{ color: "white" }} />
-                ) : (
-                  "Sign Up as Service Provider"
-                )}
+                {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Sign Up as Service Provider"}
               </Button>
             </Stack>
           </Box>
@@ -311,12 +293,8 @@ export default function RegisterCustomer() {
           </Divider>
 
           <Stack spacing={2}>
-            <Button fullWidth variant="outlined" startIcon={<Google />} disabled>
-              Google
-            </Button>
-            <Button fullWidth variant="outlined" startIcon={<Facebook />} disabled>
-              Facebook
-            </Button>
+            <Button fullWidth variant="outlined" startIcon={<Google />} disabled>Google</Button>
+            <Button fullWidth variant="outlined" startIcon={<Facebook />} disabled>Facebook</Button>
           </Stack>
         </Card>
       </RegisterContainer>

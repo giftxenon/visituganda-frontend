@@ -16,17 +16,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
-import {
-  Google,
-  Facebook,
-  Visibility,
-  VisibilityOff,
-} from "@mui/icons-material";
+import { Google, Facebook, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-/* ===================== STYLES ===================== */
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -52,8 +45,6 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   backgroundRepeat: "no-repeat",
 }));
 
-/* ===================== COMPONENT ===================== */
-
 export default function LoginPage() {
   const navigate = useNavigate();
   const defaultTheme = createTheme({ palette: { mode: "light" } });
@@ -68,7 +59,6 @@ export default function LoginPage() {
   const validateInputs = () => {
     const loginField = document.getElementById("loginField");
     const password = document.getElementById("password");
-
     let isValid = true;
 
     if (!loginField.value || loginField.value.length < 3) {
@@ -114,14 +104,17 @@ export default function LoginPage() {
         throw new Error(result.message || "Invalid credentials");
       }
 
-      // ✅ SUCCESS
       if (result.token) {
         localStorage.setItem("jwtToken", result.token);
         localStorage.setItem("userType", result.userType);
         localStorage.setItem("username", result.username);
 
-        // 🔥 Trust backend redirect
-        navigate(result.redirectUrl);
+        // Route by userType — do not trust redirectUrl from backend alone
+        if (result.userType === "BUSINESS") {
+          navigate("/business/dashboard/viewprofile");
+        } else {
+          navigate("/customer/dashboard");
+        }
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -135,29 +128,14 @@ export default function LoginPage() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline enableColorScheme />
-
       <SignUpContainer>
-        <Stack
-          sx={{
-            justifyContent: "center",
-            minHeight: { xs: "auto", sm: "100vh" },
-            px: { xs: 1, sm: 2 },
-          }}
-        >
+        <Stack sx={{ justifyContent: "center", minHeight: { xs: "auto", sm: "100vh" }, px: { xs: 1, sm: 2 } }}>
           <Card variant="outlined">
-            <Typography
-              component="h1"
-              variant="h4"
-              sx={{ width: "100%", fontSize: "clamp(1.8rem, 6vw, 2.15rem)" }}
-            >
+            <Typography component="h1" variant="h4" sx={{ width: "100%", fontSize: "clamp(1.8rem, 6vw, 2.15rem)" }}>
               Login
             </Typography>
 
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-            >
+            <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <FormControl>
                 <FormLabel>Email, Phone, or Username</FormLabel>
                 <TextField
@@ -183,11 +161,7 @@ export default function LoginPage() {
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword((prev) => !prev)}
-                          edge="end"
-                          disabled={loading}
-                        >
+                        <IconButton onClick={() => setShowPassword((prev) => !prev)} edge="end" disabled={loading}>
                           {showPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
@@ -201,27 +175,13 @@ export default function LoginPage() {
                 label="Remember me"
               />
 
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={loading}
-                sx={{ backgroundColor: "#00a152" }}
-              >
-                {loading ? (
-                  <CircularProgress size={24} sx={{ color: "white" }} />
-                ) : (
-                  "Sign in"
-                )}
+              <Button type="submit" fullWidth variant="contained" disabled={loading} sx={{ backgroundColor: "#00a152" }}>
+                {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Sign in"}
               </Button>
 
               <Typography sx={{ textAlign: "center" }}>
-                Don’t have an account?{" "}
-                <Link
-                  component={RouterLink}
-                  to="/RegisterCustomer"
-                  color="#00a152"
-                >
+                Don't have an account?{" "}
+                <Link component={RouterLink} to="/RegisterCustomer" color="#00a152">
                   Register here
                 </Link>
               </Typography>
@@ -232,23 +192,10 @@ export default function LoginPage() {
             </Divider>
 
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<Google />}
-                sx={{ color: "#00a152", borderColor: "#00a152" }}
-                disabled={loading}
-              >
+              <Button fullWidth variant="outlined" startIcon={<Google />} sx={{ color: "#00a152", borderColor: "#00a152" }} disabled={loading}>
                 Sign in with Google
               </Button>
-
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<Facebook />}
-                sx={{ color: "#00a152", borderColor: "#00a152" }}
-                disabled={loading}
-              >
+              <Button fullWidth variant="outlined" startIcon={<Facebook />} sx={{ color: "#00a152", borderColor: "#00a152" }} disabled={loading}>
                 Sign in with Facebook
               </Button>
             </Box>

@@ -165,7 +165,7 @@ function DashBoard() {
                 whiteSpace: 'nowrap',
               }}
             >
-              Visit the Pearl
+              BOOK & TRAVEL
             </Typography>
           </Box>
 

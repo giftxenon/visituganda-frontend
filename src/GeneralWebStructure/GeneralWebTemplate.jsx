@@ -53,7 +53,7 @@ export default function GeneralWebTemplate({ children, username }) {
               className="ugmap-logo"
             />
             <Typography className="appbar-title">
-              Visit the Pearl
+             BOOK & TRAVEL
             </Typography>
           </Box>
 

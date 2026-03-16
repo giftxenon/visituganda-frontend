@@ -16,8 +16,8 @@ import DisplayCompany from "./AboutClient/Displays/DisplayCompany.jsx";
 
 /* ---------------- Car Rentals ---------------- */
 import CarRental from "./pages/carRental/CarRentalAllCompaniesList.jsx";
-import CarRentalDetail from "./pages/carRental/CarRentalSingleCompanyCarsList.jsx";
-import SingleCarDetail from "./pages/carRental/SingleCarDetail.jsx";
+import CarRentalDetail from "./pages/carRental/ClientViewSingleCompanyCarsList.jsx";
+import SingleCarDetail from "./pages/carRental/ClientViewSingleCarDetail.jsx";
 
 /* ---------------- Customer Dashboard ---------------- */
 import Dashboard from "./components/layout/dashboard/DashboardLayout.jsx";
@@ -26,10 +26,9 @@ import DashboardHome from "./components/layout/dashboard/DashboardHome.jsx";
 /* ---------------- Business Dashboard ---------------- */
 import BusinessDashboard from "./components/layout/dashboard/businessSection/BusinessDashboard.jsx";
 import BusinessHome from "./components/layout/dashboard/businessSection/BusinessHome.jsx";
- import BusinessDetails from "./components/layout/dashboard/businessSection/BusinessDetails.jsx";
-//import BusinessCarManagement from "../../components/layout/dashboard/businessSection/BusinessCarSpecificlists.jsx";
-import BusinessCarManagement from "./components/layout/dashboard/businessSection/BusinessCarSpecificlists.jsx";
-
+import BusinessDetails from "./components/layout/dashboard/businessSection/BusinessDetails.jsx";
+import BusinessCarManagement from "./pages/carRental/ProviderPostSingleCompanyCarsList.jsx";
+import ProviderPostSingleCarDetails from "./pages/carRental/ProviderPostSingleCarDetails.jsx";
 
 function App() {
   return (
@@ -46,8 +45,14 @@ function App() {
 
         {/* Car Rentals */}
         <Route path="services/car-rentals" element={<CarRental />} />
-        <Route path="services/car-rentals/:companyName" element={<CarRentalDetail />} />
-        <Route path="services/car-rentals/:companyName/:carTitle" element={<SingleCarDetail />} />
+        <Route
+          path="services/car-rentals/:companyId"
+          element={<CarRentalDetail />}
+        />
+        <Route
+          path="services/car-rentals/:companyId/:carId"
+          element={<SingleCarDetail />}
+        />
 
         {/* Other Services */}
         <Route path="services/categories" element={<DisplayOptions />} />
@@ -59,16 +64,18 @@ function App() {
       </Route>
 
       {/* ---------------- Business Dashboard ---------------- */}
-      <Route path="/business/dashboard" element={<BusinessDashboard />}>
-         <Route index element={<BusinessHome />} />
-        <Route path="createbusiness" element={<BusinessDetails />} /> 
-        <Route path="viewprofile" element={<BusinessCarManagement />} /> 
+      <Route path="viewprofile" element={<BusinessCarManagement />} />
+      <Route path="/business/dashboard/" element={<BusinessDashboard />}>
+        <Route index element={<BusinessHome />} />
+        <Route path="createbusiness" element={<BusinessDetails />} />
+        <Route path="viewprofile" element={<BusinessCarManagement />} />
+        <Route path="SingleCarDetails" element={<ProviderPostSingleCarDetails />} />
         <Route path="moreprofile" element={<div>Your Profile Page</div>} />
         <Route path="wallet" element={<div>Wallet Page</div>} />
         <Route path="posts" element={<div>Your Posts Page</div>} />
         <Route path="analytics" element={<div>Analytics Page</div>} />
         <Route path="messages" element={<div>Messages Page</div>} />
-        <Route path="settings" element={<div>Settings Page</div>} /> 
+        <Route path="settings" element={<div>Settings Page</div>} />
       </Route>
 
       {/* ---------------- Other Client Pages ---------------- */}

@@ -2,9 +2,10 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import BreadcrumbsNav from "../common/BreadcrumbsNav";
 import "./UsecaseTemplate.css";
 
-// ⭐ Rating stars helper
-const renderStars = (rating = 0) => {
-  const fullStars = Math.floor(rating);
+// FIXED: added bounds checking to prevent Invalid array length error
+const renderStars = (rating) => {
+  const safeRating = Math.min(Math.max(Number(rating) || 0, 0), 5);
+  const fullStars = Math.floor(safeRating);
   const emptyStars = 5 - fullStars;
 
   return (
@@ -37,12 +38,18 @@ function UsecaseTemplate({
       <div className="card-container">
         {items.map((item, index) => (
           <div
-            key={index}
+            key={item.id || index} // FIXED: use item.id so React tracks correct item
             className="card"
             onClick={() => onItemClick?.(item)}
             style={{ cursor: onItemClick ? "pointer" : "default" }}
           >
-            {item.image && <img src={item.image} alt={item.name} className="card-image" />}
+            {item.image && (
+              <img
+                src={item.image}
+                alt={item.name}
+                className="card-image"
+              />
+            )}
             <h2>{item.name}</h2>
 
             {item.location && (
@@ -52,7 +59,7 @@ function UsecaseTemplate({
               </p>
             )}
 
-            {item.rating && (
+            {item.rating != null && (
               <div className="rating">
                 {renderStars(item.rating)}
               </div>
